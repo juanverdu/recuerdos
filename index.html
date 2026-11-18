@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Caveat:wght@500;600&display=swap">
@@ -52,7 +52,10 @@ p{margin:0}
 .wrap{max-width:620px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* header */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+/* App shell: the screen itself never scrolls; only <main> does, so the header and the tab bar never move */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.top{position:relative;flex:none;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .top .wrap{display:flex;align-items:center;gap:10px;min-height:58px}
 .brand{font-family:var(--f-display);font-weight:800;font-size:26px;letter-spacing:-.03em;display:flex;align-items:baseline;gap:6px}
 .brand i{font-style:normal;color:var(--accent)}
@@ -62,11 +65,11 @@ p{margin:0}
 .iconbtn:hover{background:var(--surface)}
 .badge{position:absolute;top:4px;right:3px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;display:grid;place-items:center}
 
-main{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 28px)}
+main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:96px}
 .screen{display:flex;flex-direction:column;gap:22px;padding-block:6px 0}
 
 /* nav */
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav{position:relative;flex:none;z-index:25;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 .nav .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h)}
 .nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.01em}
 .nav button[aria-current="page"]{color:var(--accent)}
@@ -439,7 +442,7 @@ const TKINDS = {vuelo:['Vuelo','plane'], tren:['Tren','train'], bus:['Autobús',
 const ECATS = ['Alojamiento','Transporte','Comida','Actividades','Compras','Otros'];
 
 /* ============ on-device storage ============ */
-const VERSION = '1.0.2';
+const VERSION = '1.0.3';
 const IDB = (() => {
   let p;
   const open = () => p ||= new Promise((res, rej) => {
@@ -1236,7 +1239,8 @@ function closeViewer() { S.viewer = null; const v = $('#viewer'); v.hidden = tru
 const curPhoto = () => S.viewer && S.photos.find(x => x.id === S.viewer.ids[S.viewer.idx]);
 
 /* ============ actions ============ */
-const go = tab => { S.tab = tab; S.album = null; S.trip = null; try { if (location.hash !== '#' + tab) history.replaceState(null, '', '#' + tab); } catch {} if (tab === 'notas') markSeen(); render(); scrollTo(0, 0); };
+const toTop = () => { const m = document.querySelector('main'); if (m) m.scrollTop = 0; };
+const go = tab => { S.tab = tab; S.album = null; S.trip = null; try { if (location.hash !== '#' + tab) history.replaceState(null, '', '#' + tab); } catch {} if (tab === 'notas') markSeen(); render(); toTop(); };
 async function markSeen() {
   S.seenOnOpen = S.seen;
   const me = mySlot(), newest = S.notes.filter(n => n.by !== me).reduce((m, n) => Math.max(m, n.at || 0), 0);
@@ -1251,7 +1255,7 @@ const A = {
   iam: async d => { lsSet('nido-slot', d.slot); if (S.uid) await W(S.db.doc('app/config').update({members: {[S.uid]: d.slot}})); render(); },
   newAlbum: () => albumSheet(),
   editAlbum: d => albumSheet(S.albums.find(a => a.id === d.id)),
-  openAlbum: d => { S.tab = 'albumes'; S.album = d.id; S.trip = null; try { history.replaceState(null, '', '#albumes'); } catch {} render(); scrollTo(0, 0); },
+  openAlbum: d => { S.tab = 'albumes'; S.album = d.id; S.trip = null; try { history.replaceState(null, '', '#albumes'); } catch {} render(); toTop(); },
   closeAlbum: () => { S.album = null; render(); },
   addPhotos: d => pickFiles(true, fs => uploadSheet(d.id, fs)),
   openPhoto: d => openViewer(d.id, d.ctx),
@@ -1266,7 +1270,7 @@ const A = {
         $('#del', sh).onclick = () => confirmSheet('¿Borrar esta foto?', 'No se puede deshacer.', 'Borrar foto', () => deletePhoto(p)); }); },
   newTrip: () => tripSheet(),
   editTrip: d => tripSheet(getTrip(d.id)),
-  openTrip: d => { S.tab = 'viajes'; S.trip = d.id; S.album = null; S.tripTab = 'plan'; try { history.replaceState(null, '', '#viajes'); } catch {} render(); scrollTo(0, 0); },
+  openTrip: d => { S.tab = 'viajes'; S.trip = d.id; S.album = null; S.tripTab = 'plan'; try { history.replaceState(null, '', '#viajes'); } catch {} render(); toTop(); },
   closeTrip: () => { S.trip = null; render(); },
   tripTab: d => { S.tripTab = d.v; render(); },
   lodging: d => subSheet({t: getTrip(d.id), field: 'lodging', sub: d.sub, title: 'alojamiento', okMsg: 'Alojamiento guardado',
