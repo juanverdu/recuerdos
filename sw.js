@@ -1,5 +1,5 @@
 // Nido service worker. Bump VERSION (and the one in index.html) on every change.
-const VERSION = '1.0.4';
+const VERSION = '1.0.5';
 const CACHE = 'nido-' + VERSION;
 const RUNTIME = 'nido-runtime';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
