@@ -68,7 +68,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 .iconbtn:hover{background:var(--surface)}
 .badge{position:absolute;top:4px;right:3px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;display:grid;place-items:center}
 
-main{flex:1;min-height:0;overflow-x:hidden;touch-action:pan-y;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:96px}
+main{flex:1;min-height:0;overflow-x:hidden;touch-action:pan-y;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none;padding-bottom:96px;position:relative}
 .screen{display:flex;flex-direction:column;gap:22px;padding-block:6px 0}
 
 /* nav */
@@ -266,7 +266,7 @@ main{flex:1;min-height:0;overflow-x:hidden;touch-action:pan-y;overflow-y:auto;-w
 
 /* notes */
 .compose{display:flex;gap:8px;align-items:flex-end;padding:10px}
-.compose textarea{flex:1;min-width:0;border:0;background:transparent;resize:none;min-height:44px;max-height:140px;padding:10px 6px;outline:none}
+.compose textarea{font-size:16px;flex:1;min-width:0;border:0;background:transparent;resize:none;min-height:44px;max-height:140px;padding:10px 6px;outline:none}
 .compose .btn{width:46px;padding:0}
 .msgs{display:flex;flex-direction:column;gap:10px}
 .msg{max-width:82%;display:flex;flex-direction:column;gap:3px;align-self:flex-start}
@@ -285,6 +285,30 @@ main{flex:1;min-height:0;overflow-x:hidden;touch-action:pan-y;overflow-y:auto;-w
 .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
 .sheet-x{position:absolute;right:8px;top:6px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
 .sheet.drag{transition:none!important;animation:none!important}
+/* Tap feedback: everything you can press darkens for a moment */
+button,[data-act],label,.opt{transition:filter .12s ease,transform .12s ease}
+button:not(:disabled):active,[data-act]:active,label:active,.opt:active{filter:brightness(.88)}
+.btn:not(:disabled):active,.fab:active,.iconbtn:active,.wcheck:active,.sheet-x:active{transform:scale(.95)}
+img{-webkit-user-drag:none}
+/* Swipe left on a list item */
+.sw-wrap{position:relative;border-radius:var(--r);overflow:hidden}
+.pack .sw-wrap{border-radius:0}
+.pack .sw-wrap:first-child>label{border-top:0}
+.sw-wrap>[data-row]{position:relative;z-index:1;background:var(--surface)}
+.sw-anim{transition:transform .22s ease!important}
+.sw-btns{position:absolute;top:0;bottom:0;right:0;width:160px;display:flex;z-index:0}
+.sw-btns button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:700;color:#fff}
+.sw-btns .ico{width:20px;height:20px}
+.sw-more{background:#8A8296}.sw-del{background:#D9434B}
+/* Long-press menu */
+.opts{display:flex;flex-direction:column;background:var(--surface);border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
+.opt{padding:15px 16px;text-align:left;font-size:16px;font-weight:600;border-top:1px solid var(--line)}
+.opt:first-child{border-top:0}
+.opt.danger{color:#D9434B}
+/* Pull to refresh on Inicio */
+#ptr{position:absolute;left:0;right:0;top:6px;text-align:center;font-size:13px;font-weight:600;color:var(--muted);opacity:0;pointer-events:none;display:flex;justify-content:center;align-items:center;gap:6px}
+#screen.pull{transition:none}
+#screen.back{transition:transform .25s ease}
 .sheet.leave{transition:transform .22s ease-in!important}
 .sheet h2{font-size:22px;font-weight:800;margin-bottom:14px}
 .form{display:flex;flex-direction:column;gap:14px}
@@ -313,7 +337,7 @@ main{flex:1;min-height:0;overflow-x:hidden;touch-action:pan-y;overflow-y:auto;-w
 .upl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .upl figure{margin:0;display:flex;flex-direction:column;gap:6px}
 .upl img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:var(--line)}
-.upl input{min-height:40px!important;font-size:15px!important;padding:8px 10px!important}
+.upl input{min-height:40px!important;font-size:16px!important;padding:8px 10px!important}
 .progress{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
 .progress i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
 .photo-pick{display:flex;gap:12px;align-items:center}
@@ -343,7 +367,7 @@ main{flex:1;min-height:0;overflow-x:hidden;touch-action:pan-y;overflow-y:auto;-w
 </head><body>
 <div id="app">
   <header class="top"><div class="wrap" id="topbar"></div></header>
-  <main><div class="wrap"><div id="screen" class="screen"></div></div></main>
+  <main><div id="ptr"></div><div class="wrap"><div id="screen" class="screen"></div></div></main>
   <nav class="nav" id="nav" hidden><div class="wrap">
     <button data-act="tab" data-tab="inicio"><svg class="ico" viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
     <button data-act="tab" data-tab="albumes"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>Álbumes</button>
@@ -449,7 +473,7 @@ const TKINDS = {vuelo:['Vuelo','plane'], tren:['Tren','train'], bus:['Autobús',
 const ECATS = ['Alojamiento','Transporte','Comida','Actividades','Compras','Otros'];
 
 /* ============ on-device storage ============ */
-const VERSION = '1.0.5';
+const VERSION = '1.1.0';
 const IDB = (() => {
   let p;
   const open = () => p ||= new Promise((res, rej) => {
@@ -749,13 +773,13 @@ function vAlbums() {
   return `${seg}
   ${list.length ? `<div class="agrid">${list.map(a => {
     const c = albumCover(a), n = S.photos.filter(p => p.albumId === a.id).length;
-    return `<button class="acard" data-act="openAlbum" data-id="${a.id}"><div class="acover">${c ? `<img ${bsrc(c.thumb)} alt="" loading="lazy">` : ic('image')}${n ? `<span class="cnt">${n}</span>` : ''}</div>
+    return `<button class="acard" data-row="album" data-noswipe="1" data-act="openAlbum" data-id="${a.id}"><div class="acover">${c ? `<img ${bsrc(c.thumb)} alt="" loading="lazy">` : ic('image')}${n ? `<span class="cnt">${n}</span>` : ''}</div>
       <div><h3>${esc(a.title)}</h3><div class="meta">${esc([fmt(a.date, {month:'short', year:'numeric'}), a.place].filter(Boolean).join(' · ') || 'Sin fecha')}</div></div></button>`;
   }).join('')}</div>` : `<div class="empty">${ic('image')}<h3>Vuestro primer álbum</h3><p>Crea un álbum por viaje, evento o mes y sube vuestras fotos.</p></div>`}
   <button class="fab" data-act="newAlbum" aria-label="Nuevo álbum">${ic('plus')}</button>`;
 }
 function pgrid(list, ctx) {
-  return `<div class="pgrid">${list.map((p, i) => `<button data-act="openPhoto" data-id="${p.id}" data-ctx="${ctx}" aria-label="Ver foto ${i + 1}"><img ${bsrc(p.thumb)} alt="${esc(p.caption || '')}" loading="lazy">${p.fav ? `<span class="fav">${ic('heart')}</span>` : ''}</button>`).join('')}</div>`;
+  return `<div class="pgrid">${list.map((p, i) => `<button data-row="photo" data-noswipe="1" data-act="openPhoto" data-id="${p.id}" data-ctx="${ctx}" aria-label="Ver foto ${i + 1}"><img ${bsrc(p.thumb)} alt="${esc(p.caption || '')}" loading="lazy">${p.fav ? `<span class="fav">${ic('heart')}</span>` : ''}</button>`).join('')}</div>`;
 }
 function vAlbum() {
   const a = S.albums.find(x => x.id === S.album);
@@ -774,7 +798,7 @@ function vAlbum() {
 function tripCard(t) {
   const st = tripState(t), al = t.albumId && S.albums.find(a => a.id === t.albumId), c = albumCover(al);
   const dleft = t.start ? daysBetween(today(), t.start) : null;
-  return `<button class="card tcard" data-act="openTrip" data-id="${t.id}">
+  return `<button class="card tcard" data-row="trip" data-act="openTrip" data-id="${t.id}">
     <div class="tthumb">${c ? `<img ${bsrc(c.thumb)} alt="" loading="lazy">` : (flag(t.country) || ic('plane'))}</div>
     <div class="tbody"><h3>${esc(t.dest)}</h3><div class="meta">${flag(t.country)} ${esc(countryName(t.country))}</div><div class="meta">${esc(fmtRange(t.start, t.end))}</div>
       <div>${st === 'now' ? '<span class="chip teal">De viaje ahora</span>' : st === 'plan' ? (dleft != null ? `<span class="chip teal">En ${plural(dleft, 'día')}</span>` : '<span class="chip gray">Por fechar</span>') : '<span class="chip">Hecho</span>'}</div></div></button>`;
@@ -825,9 +849,9 @@ function vTrip() {
 function tPlan(t) {
   const lodg = live(t.lodging), tr = live(t.transport).sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || ''));
   return `<section class="sec"><div class="sec-h"><h2>Alojamiento</h2><button class="link" data-act="lodging" data-id="${t.id}">+ Añadir</button></div>
-    ${lodg.length ? `<div class="stack">${lodg.map(l => `<button class="card item" data-act="lodging" data-id="${t.id}" data-sub="${l.id}"><span class="ib">${ic('bed', 'sm')}</span><span class="tx"><b>${esc(l.name)}</b><span>${esc([l.from && l.to ? fmtRange(l.from, l.to) : fmt(l.from), l.address].filter(Boolean).join(' · '))}</span>${l.notes ? `<span>${esc(l.notes)}</span>` : ''}</span></button>`).join('')}</div>` : '<p class="muted small">Hotel, apartamento, casa de amigos…</p>'}</section>
+    ${lodg.length ? `<div class="stack">${lodg.map(l => `<button class="card item" data-row="lodging" data-act="lodging" data-id="${t.id}" data-sub="${l.id}"><span class="ib">${ic('bed', 'sm')}</span><span class="tx"><b>${esc(l.name)}</b><span>${esc([l.from && l.to ? fmtRange(l.from, l.to) : fmt(l.from), l.address].filter(Boolean).join(' · '))}</span>${l.notes ? `<span>${esc(l.notes)}</span>` : ''}</span></button>`).join('')}</div>` : '<p class="muted small">Hotel, apartamento, casa de amigos…</p>'}</section>
     <section class="sec"><div class="sec-h"><h2>Transporte</h2><button class="link" data-act="transport" data-id="${t.id}">+ Añadir</button></div>
-    ${tr.length ? `<div class="stack">${tr.map(x => { const k = TKINDS[x.kind] || TKINDS.otro; return `<button class="card item" data-act="transport" data-id="${t.id}" data-sub="${x.id}"><span class="ib">${ic(k[1], 'sm')}</span><span class="tx"><b>${esc(x.from || '?')} → ${esc(x.to || '?')}</b><span>${esc([k[0], fmt(x.date, {weekday:'short', day:'numeric', month:'short'}), x.time, x.ref && 'Ref. ' + x.ref].filter(Boolean).join(' · '))}</span></span></button>`; }).join('')}</div>` : '<p class="muted small">Vuelos, trenes, coche de alquiler…</p>'}</section>
+    ${tr.length ? `<div class="stack">${tr.map(x => { const k = TKINDS[x.kind] || TKINDS.otro; return `<button class="card item" data-row="transport" data-act="transport" data-id="${t.id}" data-sub="${x.id}"><span class="ib">${ic(k[1], 'sm')}</span><span class="tx"><b>${esc(x.from || '?')} → ${esc(x.to || '?')}</b><span>${esc([k[0], fmt(x.date, {weekday:'short', day:'numeric', month:'short'}), x.time, x.ref && 'Ref. ' + x.ref].filter(Boolean).join(' · '))}</span></span></button>`; }).join('')}</div>` : '<p class="muted small">Vuelos, trenes, coche de alquiler…</p>'}</section>
     <section class="sec"><div class="sec-h"><h2>Notas del viaje</h2><button class="link" data-act="tripNotes" data-id="${t.id}">${t.notes ? 'Editar' : '+ Añadir'}</button></div>
     ${t.notes ? `<div class="card pad" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(t.notes)}</div>` : '<p class="muted small">Ideas, reservas pendientes, restaurantes…</p>'}</section>`;
 }
@@ -851,7 +875,7 @@ function tMoney(t) {
     ${total ? `<div class="settle">${settle}</div>` : ''}
   </section>
   <section class="sec"><div class="sec-h"><h2>Gastos</h2><button class="link" data-act="expense" data-id="${t.id}">+ Añadir gasto</button></div>
-  ${ex.length ? `<div class="stack">${ex.map(e => `<button class="card item" data-act="expense" data-id="${t.id}" data-sub="${e.id}"><span class="ib pink">${ic('card', 'sm')}</span><span class="tx"><b>${esc(e.desc)}</b><span>${esc([e.cat, 'pagó ' + nameOf(e.payer), fmt(e.date, {day:'numeric', month:'short'})].filter(Boolean).join(' · '))}</span></span><span class="amt">${money(e.amount)}</span></button>`).join('')}</div>` : '<p class="muted small">Apuntad quién paga cada cosa y la app hace las cuentas al final.</p>'}</section>`;
+  ${ex.length ? `<div class="stack">${ex.map(e => `<button class="card item" data-row="expense" data-act="expense" data-id="${t.id}" data-sub="${e.id}"><span class="ib pink">${ic('card', 'sm')}</span><span class="tx"><b>${esc(e.desc)}</b><span>${esc([e.cat, 'pagó ' + nameOf(e.payer), fmt(e.date, {day:'numeric', month:'short'})].filter(Boolean).join(' · '))}</span></span><span class="amt">${money(e.amount)}</span></button>`).join('')}</div>` : '<p class="muted small">Apuntad quién paga cada cosa y la app hace las cuentas al final.</p>'}</section>`;
 }
 function tPack(t) {
   const items = live(t.packing), done = items.filter(i => i.done).length;
@@ -859,7 +883,7 @@ function tPack(t) {
   return `<form class="addrow" id="f-pack" data-id="${t.id}"><input id="pack-in" placeholder="Añadir a la maleta…" maxlength="80" autocomplete="off"><select id="pack-who" class="input" style="width:auto;min-width:0;flex:none">${groups.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('')}</select><button class="btn" style="width:46px;padding:0" aria-label="Añadir">${ic('plus')}</button></form>
   ${items.length ? `<div class="small muted">${done} de ${items.length} preparado</div><div class="bar"><i style="width:${items.length ? done / items.length * 100 : 0}%"></i></div>
   ${groups.map(([k, l]) => { const g = items.filter(i => (i.who || '') === k); if (!g.length) return '';
-    return `<section class="sec"><span class="eyebrow">${esc(l)}</span><div class="card pack">${g.map(i => `<label class="${i.done ? 'done' : ''}"><input type="checkbox" data-act="packToggle" data-id="${t.id}" data-sub="${i.id}" ${i.done ? 'checked' : ''}><span>${esc(i.text)}</span><button type="button" class="del" data-act="packDel" data-id="${t.id}" data-sub="${i.id}" aria-label="Quitar">${ic('x', 'sm')}</button></label>`).join('')}</div></section>`; }).join('')}`
+    return `<section class="sec"><span class="eyebrow">${esc(l)}</span><div class="card pack">${g.map(i => `<label class="${i.done ? 'done' : ''}" data-row="pack" data-id="${t.id}" data-sub="${i.id}"><input type="checkbox" data-act="packToggle" data-id="${t.id}" data-sub="${i.id}" ${i.done ? 'checked' : ''}><span>${esc(i.text)}</span><button type="button" class="del" data-act="packDel" data-id="${t.id}" data-sub="${i.id}" aria-label="Quitar">${ic('x', 'sm')}</button></label>`).join('')}</div></section>`; }).join('')}`
   : `<div class="empty">${ic('bag')}<h3>Maleta vacía</h3><p>Apuntad lo que hay que llevar y marcadlo cuando esté en la maleta.</p></div>`}`;
 }
 function tPhotos(t) {
@@ -885,7 +909,7 @@ function vTimeline() {
     else if (it.t === 't') { const t = it.trip, al = t.albumId && S.albums.find(a => a.id === t.albumId), c = albumCover(al);
       out += `<button class="tl-it trip" data-act="openTrip" data-id="${t.id}"><span class="d">${esc(fmtRange(t.start, t.end))}<span class="chip teal">Viaje</span></span><h3>${flag(t.country)} ${esc(t.dest)}</h3>${c ? `<div class="pola"><img ${bsrc(c.thumb)} alt="" loading="lazy"><span class="cap">${esc(c.caption || t.dest)}</span></div>` : ''}</button>`; }
     else { const m = it.m;
-      out += `<button class="tl-it" data-act="moment" data-sub="${m.id}"><span class="d">${esc(fmtLong(m.date))}<span class="chip">${esc(KINDS[m.kind] || 'Momento')}</span></span><h3>${esc(m.title)}</h3>${m.text ? `<p>${esc(m.text)}</p>` : ''}${m.thumb ? `<div class="pola"><img ${bsrc(m.thumb)} alt="" loading="lazy"><span class="cap">${esc(m.caption || '')}</span></div>` : ''}</button>`; }
+      out += `<button class="tl-it" data-row="moment" data-noswipe="1" data-act="moment" data-sub="${m.id}"><span class="d">${esc(fmtLong(m.date))}<span class="chip">${esc(KINDS[m.kind] || 'Momento')}</span></span><h3>${esc(m.title)}</h3>${m.text ? `<p>${esc(m.text)}</p>` : ''}${m.thumb ? `<div class="pola"><img ${bsrc(m.thumb)} alt="" loading="lazy"><span class="cap">${esc(m.caption || '')}</span></div>` : ''}</button>`; }
   }
   return `<div class="sec-h"><h2 style="font-size:26px;font-weight:800">Nuestra historia</h2><span class="small muted">${plural(items.length, 'momento')}</span></div>
   ${items.length ? `<div class="tl">${out}</div>` : `<div class="empty">${ic('tl')}<h3>Escribid vuestra historia</h3><p>Primera cita, aniversarios, el día que os mudasteis… cada momento con foto y texto.</p></div>`}
@@ -898,7 +922,7 @@ function vWishes() {
   const list = S.wishes.filter(w => !!w.done === done).sort((a, b) => done ? (b.doneAt || '').localeCompare(a.doneAt || '') : (b.at || 0) - (a.at || 0));
   const pend = S.wishes.filter(w => !w.done).length, hechos = S.wishes.length - pend;
   return `<div class="seg"><button data-act="seg" data-k="wishSeg" data-v="pend" aria-pressed="${!done}">Pendientes · ${pend}</button><button data-act="seg" data-k="wishSeg" data-v="hechos" aria-pressed="${done}">Cumplidos · ${hechos}</button></div>
-  ${list.length ? `<div class="stack">${list.map(w => `<div class="card wish ${w.done ? 'done' : ''}">
+  ${list.length ? `<div class="stack">${list.map(w => `<div class="card wish ${w.done ? 'done' : ''}" data-row="wish" data-sub="${w.id}">
     <button class="wcheck" data-act="${w.done ? 'wishUndo' : 'wishDone'}" data-sub="${w.id}" aria-label="${w.done ? 'Marcar como pendiente' : 'Marcar como hecho'}">${ic('check', 'sm')}</button>
     <button class="tx" data-act="wish" data-sub="${w.id}" style="text-align:left"><h3>${esc(w.title)}</h3>${w.note ? `<p>${esc(w.note)}</p>` : ''}
       <span class="row"><span class="chip ${w.kind === 'plan' ? '' : 'teal'}">${esc(WKINDS[w.kind] || 'Plan')}</span>${w.country ? `<span class="chip gray">${flag(w.country)} ${esc(countryName(w.country))}</span>` : ''}${w.place ? `<span class="chip gray">${esc(w.place)}</span>` : ''}${w.done && w.doneAt ? `<span class="small muted">Hecho el ${esc(fmt(w.doneAt))}</span>` : ''}</span></button></div>`).join('')}</div>`
@@ -912,7 +936,7 @@ function vNotes() {
   let lastD = '', out = '';
   list.forEach(n => { const d = ymd(new Date(n.at || 0));
     if (d !== lastD) { out += `<div class="daysep">${d === today() ? 'Hoy' : esc(fmt(d, {weekday:'long', day:'numeric', month:'long'}))}</div>`; lastD = d; }
-    out += `<div class="msg ${n.by === me ? 'mine' : ''} ${n.by !== me && n.at > S.seenOnOpen ? 'new' : ''}"><div class="b">${esc(n.text)}</div><div class="m">${esc(nameOf(n.by))} · ${new Date(n.at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})}${n.by === me ? `<button data-act="noteDel" data-sub="${n.id}" style="margin-left:8px;color:var(--muted);text-decoration:underline">borrar</button>` : ''}</div></div>`; });
+    out += `<div class="msg ${n.by === me ? 'mine' : ''} ${n.by !== me && n.at > S.seenOnOpen ? 'new' : ''}" data-row="note" data-noswipe="1" data-sub="${n.id}"><div class="b">${esc(n.text)}</div><div class="m">${esc(nameOf(n.by))} · ${new Date(n.at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})}${n.by === me ? `<button data-act="noteDel" data-sub="${n.id}" style="margin-left:8px;color:var(--muted);text-decoration:underline">borrar</button>` : ''}</div></div>`; });
   return `<form class="card compose" id="f-note"><textarea id="note-in" rows="1" maxlength="400" placeholder="Escribe algo bonito para ${esc(nameOf(other(me)))}…"></textarea><button class="btn" aria-label="Enviar nota">${ic('send', 'sm')}</button></form>
   ${S.notes.length ? `<div class="msgs">${out}</div>` : `<div class="empty">${ic('msg')}<h3>Sin notas aún</h3><p>Un "te quiero", la lista de la compra o un recordatorio: le aparecerá en Inicio.</p></div>`}`;
 }
@@ -927,35 +951,138 @@ function openSheet(html, mount) {
 }
 function closeSheet() { const r = $('#sheet-root'); r.hidden = true; r.innerHTML = ''; if (!S.viewer) document.body.classList.remove('noscroll'); }
 
-/* iPhone-style gestures:
-   - on a sheet: swipe right, or pull down from the top, to close it
-   - on a detail screen (album, trip, notes): swipe right from the left edge to go back */
+/* iPhone-style gestures (see the "Cómo tienen que ser las apps" guide):
+   - window (sheet): swipe down from its top, or swipe right, to close it
+   - photo viewer: swipe down to close it
+   - album / trip / notes: swipe right from the left edge to go back
+   - list item: swipe left to show Más / Borrar
+   - anything with options: long-press for its menu
+   - Inicio: pull down to show another memory */
+const ROW_W = 160;
+let openRow = null, suppressClick = false, g = null;
+function closeRow(animate = true) { const r = openRow; openRow = null; if (!r || !r.isConnected) return; r.classList.toggle('sw-anim', animate); r.style.transform = ''; }
+function rowWrap(row) {
+  if (row.parentNode.classList.contains('sw-wrap')) return;
+  const w = document.createElement('div'); w.className = 'sw-wrap';
+  row.replaceWith(w); w.appendChild(row);
+  w.insertAdjacentHTML('afterbegin', `<div class="sw-btns"><button type="button" class="sw-more" data-sw="more">${ic('more')}<span>Más</span></button><button type="button" class="sw-del" data-sw="del">${ic('trash')}<span>Borrar</span></button></div>`);
+}
+function delTrip(t) { confirmSheet('¿Borrar este viaje?', 'Se borra el plan, los gastos y la maleta. El álbum de fotos se conserva.', 'Borrar viaje', async () => { await W(docRef('trips', t.id).delete(), 'Viaje borrado'); if (S.trip === t.id) S.trip = null; schedule(); }); }
+function delMoment(m) { confirmSheet('¿Borrar este momento?', 'Desaparece de vuestra historia.', 'Borrar', async () => { await W(docRef('moments', m.id).delete(), 'Momento borrado'); if (m.img) { try { await S.assets.delete(m.img); await S.assets.delete(m.thumb); } catch {} } }); }
+function delAlbum(a) { const n = S.photos.filter(p => p.albumId === a.id).length;
+  confirmSheet('¿Borrar este álbum?', n ? `Se borrarán también sus ${n} fotos. No se puede deshacer.` : 'No se puede deshacer.', 'Borrar álbum', async () => {
+    for (const p of S.photos.filter(p => p.albumId === a.id)) await deletePhoto(p, true);
+    await W(docRef('albums', a.id).delete(), 'Álbum borrado'); if (S.album === a.id) S.album = null; schedule(); }); }
+function rowOpts(el) {
+  const d = el.dataset;
+  const subDel = (field, msg) => () => W(docRef('trips', d.id).update({[field]: {[d.sub]: null}}), msg);
+  switch (d.row) {
+    case 'trip': { const t = getTrip(d.id); return t && {title: t.dest, items: [['Abrir', () => A.openTrip(d)], ['Editar', () => tripSheet(t)], ['Borrar viaje', () => delTrip(t), 1]]}; }
+    case 'wish': { const w = S.wishes.find(x => x.id === d.sub); return w && {title: w.title, items: [['Editar', () => wishSheet(w)], [w.done ? 'Volver a pendiente' : 'Marcar como cumplido', () => A[w.done ? 'wishUndo' : 'wishDone'](d)], ['Borrar deseo', () => confirmSheet('¿Borrar este deseo?', 'Se quita de la lista.', 'Borrar', () => W(docRef('wishes', w.id).delete(), 'Deseo borrado')), 1]]}; }
+    case 'expense': case 'lodging': case 'transport': {
+      const field = {expense: 'expenses', lodging: 'lodging', transport: 'transport'}[d.row];
+      return {title: {expense: 'Gasto', lodging: 'Alojamiento', transport: 'Transporte'}[d.row], items: [['Editar', () => A[d.row](d)], ['Borrar', subDel(field, 'Borrado'), 1]]}; }
+    case 'pack': return {title: 'Maleta', items: [['Quitar de la maleta', subDel('packing', 'Quitado'), 1]]};
+    case 'note': { const n = S.notes.find(x => x.id === d.sub); if (!n) return null;
+      const items = [['Copiar texto', () => { try { navigator.clipboard.writeText(n.text); toast('Copiado'); } catch {} }]];
+      if (n.by === mySlot()) items.push(['Borrar nota', () => W(docRef('notes', n.id).delete(), 'Nota borrada'), 1]);
+      return {title: 'Nota', items}; }
+    case 'moment': { const m = S.moments.find(x => x.id === d.sub); return m && {title: m.title, items: [['Editar', () => momentSheet(m)], ['Borrar momento', () => delMoment(m), 1]]}; }
+    case 'album': { const a = S.albums.find(x => x.id === d.id); return a && {title: a.title, items: [['Abrir', () => A.openAlbum(d)], ['Añadir fotos', () => A.addPhotos(d)], ['Editar', () => albumSheet(a)], ['Borrar álbum', () => delAlbum(a), 1]]}; }
+    case 'photo': { const p = S.photos.find(x => x.id === d.id); return p && {title: 'Foto', items: [['Ver', () => openViewer(p.id, d.ctx)], [p.fav ? 'Quitar de favoritas' : 'Marcar como favorita', () => W(docRef('photos', p.id).update({fav: !p.fav}), p.fav ? '' : 'Guardada en favoritas')], ['Usar como portada del álbum', () => W(docRef('albums', p.albumId).update({cover: p.id}), 'Portada cambiada')], ['Borrar foto', () => confirmSheet('¿Borrar esta foto?', 'No se puede deshacer.', 'Borrar foto', () => deletePhoto(p)), 1]]}; }
+  }
+  return null;
+}
+function optionsSheet(o) {
+  openSheet(`<h2>${esc(o.title)}</h2><div class="opts">${o.items.map(([l, , danger], i) => `<button type="button" class="opt ${danger ? 'danger' : ''}" data-i="${i}">${esc(l)}</button>`).join('')}</div>`,
+    sh => sh.querySelectorAll('.opt').forEach(b => b.onclick = () => { closeSheet(); o.items[b.dataset.i][1](); }));
+}
 (() => {
-  let g = null;
   const isField = el => el.closest('input,textarea,select,[contenteditable]');
+  const sheetOpen = () => !$('#sheet-root').hidden;
+  document.addEventListener('gesturestart', e => e.preventDefault(), {passive: false});
+  document.addEventListener('gesturechange', e => e.preventDefault(), {passive: false});
+  document.addEventListener('click', e => {
+    if (suppressClick) { suppressClick = false; e.preventDefault(); e.stopPropagation(); return; }
+    const sw = e.target.closest('[data-sw]');
+    if (sw) { e.preventDefault(); e.stopPropagation();
+      const row = sw.closest('.sw-wrap').querySelector('[data-row]'), o = rowOpts(row); closeRow();
+      if (o) sw.dataset.sw === 'del' ? o.items.find(x => x[2])?.[1]() : optionsSheet(o); return; }
+    if (openRow) { const inside = openRow.contains(e.target); closeRow(); if (inside) { e.preventDefault(); e.stopPropagation(); } }
+  }, true);
   document.addEventListener('touchstart', e => {
+    suppressClick = false;
+    if (g?.lp) clearTimeout(g.lp);
     if (e.touches.length !== 1) { g = null; return; }
-    const t = e.touches[0], sh = e.target.closest('#sheet-root .sheet');
-    if (sh && !isField(e.target)) g = {kind: 'sheet', el: sh, x: t.clientX, y: t.clientY, top: sh.scrollTop <= 0, axis: null};
-    else if (!sh && $('#sheet-root').hidden && !S.viewer && t.clientX < 40 && (S.album || S.trip || S.tab === 'notas')) g = {kind: 'back', el: $('main'), x: t.clientX, y: t.clientY, axis: null};
-    else g = null;
+    const t = e.touches[0], tg = e.target, sh = tg.closest('#sheet-root .sheet'), m = $('main');
+    if (openRow && !openRow.parentNode?.contains(tg)) closeRow();
+    g = {x: t.clientX, y: t.clientY, axis: null};
+    if (sh) { if (isField(tg)) return g = null; Object.assign(g, {kind: 'sheet', el: sh, top: sh.scrollTop <= 0}); return; }
+    if (sheetOpen()) return g = null;
+    if (S.viewer) { if (tg.closest('.v-top')) return g = null; Object.assign(g, {kind: 'viewer', el: $('#viewer')}); return; }
+    if (t.clientX < 40 && (S.album || S.trip || S.tab === 'notas')) { Object.assign(g, {kind: 'back', el: m}); return; }
+    const row = tg.closest('[data-row]');
+    if (row && !isField(tg) && !tg.closest('[data-sw]')) {
+      Object.assign(g, {kind: 'row', el: row, wasOpen: openRow === row});
+      g.lp = setTimeout(() => { const o = rowOpts(row); if (!o) return; g = null; suppressClick = true; closeRow(false); optionsSheet(o); }, 480);
+      return;
+    }
+    if (S.tab === 'inicio' && S.cfg && mySlot() && m.scrollTop <= 0) { Object.assign(g, {kind: 'ptr', el: $('#screen')}); return; }
+    g = null;
   }, {passive: true});
   document.addEventListener('touchmove', e => {
     if (!g) return;
     const t = e.touches[0], dx = t.clientX - g.x, dy = t.clientY - g.y;
+    if (g.lp && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) { clearTimeout(g.lp); g.lp = null; }
     if (!g.axis) { if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return; g.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; }
-    if (g.axis === 'x' && dx > 0) { g.el.classList.add('drag'); g.el.style.transform = `translateX(${dx}px)`; g.dx = dx; }
-    else if (g.kind === 'sheet' && g.axis === 'y' && g.top && dy > 0 && g.el.scrollTop <= 0) { g.el.classList.add('drag'); g.el.style.transform = `translateY(${dy}px)`; g.dy = dy; }
+    const el = g.el;
+    if (g.kind === 'sheet') {
+      if (g.axis === 'x' && dx > 0) { el.classList.add('drag'); el.style.transform = `translateX(${dx}px)`; g.dx = dx; }
+      else if (g.axis === 'y' && g.top && dy > 0 && el.scrollTop <= 0) { el.classList.add('drag'); el.style.transform = `translateY(${dy}px)`; g.dy = dy; }
+    } else if (g.kind === 'viewer') {
+      if (g.axis === 'y' && dy > 0) { el.style.transition = 'none'; el.style.transform = `translateY(${dy}px)`; el.style.opacity = String(Math.max(.4, 1 - dy / 600)); g.dy = dy; }
+    } else if (g.kind === 'back') {
+      if (g.axis === 'x' && dx > 0) { el.style.transition = 'none'; el.style.transform = `translateX(${dx}px)`; g.dx = dx; }
+    } else if (g.kind === 'row') {
+      if (g.axis === 'x' && !el.dataset.noswipe) {
+        const x = Math.min(0, Math.max(-ROW_W - 40, (g.wasOpen ? -ROW_W : 0) + dx));
+        if (x < 0 || g.wasOpen) { rowWrap(el); el.classList.remove('sw-anim'); el.style.transform = `translateX(${x}px)`; g.rx = x; }
+      }
+    } else if (g.kind === 'ptr') {
+      if (g.axis === 'y' && dy > 0) {
+        const p = Math.min(90, dy * .45), ptr = $('#ptr'); g.p = p;
+        el.classList.add('pull'); el.style.transform = `translateY(${p}px)`;
+        ptr.style.opacity = String(Math.min(1, p / 50));
+        ptr.innerHTML = `${ic('shuffle', 'sm')} ${p > 55 ? 'Suelta para ver otro recuerdo' : 'Desliza para otro recuerdo'}`;
+      }
+    }
   }, {passive: true});
   const end = () => {
-    if (!g) return; const {el, kind} = g, dx = g.dx || 0, dy = g.dy || 0; g = null;
-    el.classList.remove('drag');
-    const go = dx > 90 || dy > 110;
-    if (!go) { el.classList.add('leave'); el.style.transform = ''; setTimeout(() => el.classList.remove('leave'), 240); return; }
-    if (kind === 'sheet') { el.classList.add('leave'); el.style.transform = dx > 90 ? 'translateX(110%)' : 'translateY(110%)'; setTimeout(closeSheet, 200); }
-    else { el.style.transform = ''; if (S.album) A.closeAlbum(); else if (S.trip) A.closeTrip(); else go_back(); }
+    if (!g) return; const c = g; g = null; if (c.lp) clearTimeout(c.lp);
+    const el = c.el;
+    if (c.kind === 'sheet') {
+      el.classList.remove('drag');
+      if ((c.dx || 0) > 90 || (c.dy || 0) > 110) { el.classList.add('leave'); el.style.transform = (c.dx || 0) > 90 ? 'translateX(110%)' : 'translateY(110%)'; setTimeout(closeSheet, 200); }
+      else if (c.dx || c.dy) { el.classList.add('leave'); el.style.transform = ''; setTimeout(() => el.classList.remove('leave'), 240); }
+    } else if (c.kind === 'viewer') {
+      if ((c.dy || 0) > 110) { closeViewer(); }
+      if (el) { el.style.transition = 'transform .2s ease, opacity .2s ease'; el.style.transform = ''; el.style.opacity = ''; }
+    } else if (c.kind === 'back') {
+      el.style.transition = 'transform .2s ease'; el.style.transform = '';
+      if ((c.dx || 0) > 90) { if (S.album) A.closeAlbum(); else if (S.trip) A.closeTrip(); else go('inicio'); }
+    } else if (c.kind === 'row') {
+      if (c.rx !== undefined) {
+        el.classList.add('sw-anim');
+        if (c.rx < -60) { el.style.transform = `translateX(-${ROW_W}px)`; openRow = el; }
+        else { el.style.transform = ''; if (openRow === el) openRow = null; }
+      }
+    } else if (c.kind === 'ptr') {
+      const ptr = $('#ptr');
+      el.classList.remove('pull'); el.classList.add('back'); el.style.transform = ''; ptr.style.opacity = '0';
+      setTimeout(() => el.classList.remove('back'), 260);
+      if ((c.p || 0) > 55) { S.otd++; render(); toast('Otro recuerdo'); }
+    }
   };
-  const go_back = () => go('inicio');
   document.addEventListener('touchend', end, {passive: true});
   document.addEventListener('touchcancel', end, {passive: true});
 })();
