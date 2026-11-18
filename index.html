@@ -282,6 +282,9 @@ main{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 28px)}
 .field>span{font-size:13px;font-weight:600;color:var(--muted)}
 .input,.form input:not([type=checkbox]):not([type=file]),.form select,.form textarea,.addrow input{width:100%;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--surface);padding:10px 12px;outline:none;font-size:16px}
 .form textarea{min-height:96px;resize:vertical}
+/* iOS Safari gives date/time inputs their own width; make them fill the field like the rest */
+input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;text-align:left}
+input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
 .form input:focus,.form select:focus,.form textarea:focus,.addrow input:focus{border-color:var(--accent)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .two>*{min-width:0}
@@ -413,7 +416,7 @@ const TKINDS = {vuelo:['Vuelo','plane'], tren:['Tren','train'], bus:['Autobús',
 const ECATS = ['Alojamiento','Transporte','Comida','Actividades','Compras','Otros'];
 
 /* ============ on-device storage ============ */
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const IDB = (() => {
   let p;
   const open = () => p ||= new Promise((res, rej) => {
