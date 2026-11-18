@@ -1,0 +1,1332 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nido</title>
+<meta name="theme-color" content="#2A1D3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nido">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Caveat:wght@500;600&display=swap">
+<style>
+/* Layout: one-column phone app — sticky header, content, fixed bottom tab bar. Photos are framed as polaroids; captions handwritten. */
+:root{
+  --bg:#F6F3F8; --surface:#FFFFFF; --paper:#FFFFFF; --ink:#22192F; --muted:#6F6681; --line:#E7E1EE;
+  --accent:#C93A64; --accent-ink:#FFFFFF; --soft:#F9E3EA; --teal:#2C6E69; --teal-soft:#DCEDEA;
+  --hero-bg:#2A1D3A; --hero-fg:#FBF3F6; --hero-muted:#C9BAD8; --trip-bg:#2C6E69; --map-land:#E4DEEB; --map-wish:#F2B8C9;
+  --ok:#2C7A4B; --warn:#B4651B;
+  --shadow:0 1px 2px rgba(34,25,47,.06),0 10px 28px rgba(34,25,47,.08);
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"DM Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+  --r:18px; --nav-h:64px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141019; --surface:#1E1826; --paper:#2A2333; --ink:#F2EDF7; --muted:#A79EB7; --line:#2F2839;
+  --accent:#F0698F; --accent-ink:#1A0E14; --soft:#3A1E2B; --teal:#6CC0B6; --teal-soft:#1B2E2C;
+  --hero-bg:#2A1F36; --hero-fg:#FBF3F6; --hero-muted:#BFAED0; --trip-bg:#1F4E4A; --map-land:#2D2637; --map-wish:#6B3247;
+  --ok:#6BC58E; --warn:#E5A15E; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141019; --surface:#1E1826; --paper:#2A2333; --ink:#F2EDF7; --muted:#A79EB7; --line:#2F2839;
+  --accent:#F0698F; --accent-ink:#1A0E14; --soft:#3A1E2B; --teal:#6CC0B6; --teal-soft:#1B2E2C;
+  --hero-bg:#2A1F36; --hero-fg:#FBF3F6; --hero-muted:#BFAED0; --trip-bg:#1F4E4A; --map-land:#2D2637; --map-wish:#6B3247;
+  --ok:#6BC58E; --warn:#E5A15E; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body.noscroll{overflow:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ico.sm{width:18px;height:18px}
+.ico.fill{fill:currentColor}
+.wrap{max-width:620px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.top .wrap{display:flex;align-items:center;gap:10px;min-height:58px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:26px;letter-spacing:-.03em;display:flex;align-items:baseline;gap:6px}
+.brand i{font-style:normal;color:var(--accent)}
+.top-title{font-family:var(--f-display);font-weight:700;font-size:19px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spacer{flex:1}
+.iconbtn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;position:relative;color:var(--ink)}
+.iconbtn:hover{background:var(--surface)}
+.badge{position:absolute;top:4px;right:3px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;display:grid;place-items:center}
+
+main{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 28px)}
+.screen{display:flex;flex-direction:column;gap:22px;padding-block:6px 0}
+
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h)}
+.nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.01em}
+.nav button[aria-current="page"]{color:var(--accent)}
+.nav button[aria-current="page"] .ico{stroke-width:2.2}
+
+/* generic */
+.sec{display:flex;flex-direction:column;gap:12px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.sec-h h2{font-size:20px;font-weight:700}
+.eyebrow{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
+.pad{padding:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 18px;border-radius:999px;font-weight:600;font-size:15px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
+.btn.ghost{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.teal{background:var(--teal);color:var(--surface)}
+.btn.danger{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.btn.sm{height:36px;padding:0 14px;font-size:13.5px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:default}
+.link{color:var(--accent);font-weight:600;font-size:14px}
+.seg{display:flex;background:var(--surface);border-radius:999px;padding:4px;box-shadow:inset 0 0 0 1px var(--line);gap:2px}
+.seg button{flex:1;height:36px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--soft);color:var(--accent);white-space:nowrap}
+.chip.teal{background:var(--teal-soft);color:var(--teal)}
+.chip.gray{background:var(--bg);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.empty{text-align:center;padding:34px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted)}
+.empty h3{color:var(--ink);font-size:18px}
+.empty .ico{width:34px;height:34px;color:var(--accent);stroke-width:1.5}
+.fab{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 16px);z-index:24;width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 40%,transparent)}
+.fab .ico{width:26px;height:26px;stroke-width:2.2}
+@media (min-width:660px){.fab{right:calc(50% - 300px)}}
+.num{font-variant-numeric:tabular-nums}
+
+/* hero */
+.hero{background:var(--hero-bg);color:var(--hero-fg);border-radius:24px;padding:22px 20px 20px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;border:1px solid color-mix(in srgb,var(--hero-fg) 14%,transparent);box-shadow:0 0 0 22px color-mix(in srgb,var(--hero-fg) 4%,transparent),0 0 0 46px color-mix(in srgb,var(--hero-fg) 3%,transparent)}
+.hero-names{font-family:var(--f-hand);font-size:26px;line-height:1;color:var(--hero-muted)}
+.days-big{font-family:var(--f-display);font-weight:800;font-size:clamp(64px,22vw,96px);line-height:.95;letter-spacing:-.04em;margin-top:10px;font-variant-numeric:tabular-nums}
+.days-label{font-family:var(--f-display);font-weight:600;font-size:20px;margin-top:2px}
+.days-sub{color:var(--hero-muted);font-size:13.5px;margin-top:8px}
+.cd-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cd{padding:14px;display:flex;flex-direction:column;gap:4px;text-align:left;min-width:0}
+.cd b{font-family:var(--f-display);font-size:34px;line-height:1;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.cd .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd.trip b{color:var(--teal)} .cd.ann b{color:var(--accent)}
+
+/* polaroid */
+.pola{background:var(--paper);padding:8px 8px 10px;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.08),0 14px 30px rgba(34,25,47,.12);display:flex;flex-direction:column;gap:6px}
+.pola img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:2px;display:block;background:var(--line)}
+.pola .cap{font-family:var(--f-hand);font-size:22px;line-height:1.1;padding:0 4px;color:var(--ink);min-height:24px}
+.otd{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:18px;align-items:center;padding:18px}
+.otd .pola{transform:rotate(-3deg)}
+.otd .pola img{aspect-ratio:4/5}
+.otd-txt{display:flex;flex-direction:column;gap:8px;min-width:0}
+.otd-txt h3{font-size:19px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:14px 12px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-family:var(--f-display);font-size:28px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted);font-weight:500}
+
+/* note preview */
+.notep{padding:16px;display:flex;flex-direction:column;gap:8px}
+.notep q{font-family:var(--f-hand);font-size:26px;line-height:1.15;quotes:none}
+
+/* albums */
+.agrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.acard{text-align:left;display:flex;flex-direction:column;gap:8px;min-width:0}
+.acover{aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--muted);position:relative}
+.acover img{width:100%;height:100%;object-fit:cover;display:block}
+.acover .cnt{position:absolute;right:8px;bottom:8px;background:rgba(20,16,25,.62);color:#fff;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;backdrop-filter:blur(6px)}
+.acard h3{font-size:16px;font-weight:700;line-height:1.2}
+.acard .meta{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;border-radius:14px;overflow:hidden}
+.pgrid button{aspect-ratio:1;position:relative;background:var(--line);overflow:hidden}
+.pgrid img{width:100%;height:100%;object-fit:cover;display:block}
+.pgrid .fav{position:absolute;right:5px;bottom:5px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.pgrid .fav .ico{width:16px;height:16px;fill:#fff;stroke:#fff}
+.ahead{display:flex;flex-direction:column;gap:6px}
+.ahead h1{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.metarow{display:flex;flex-wrap:wrap;gap:8px 14px;color:var(--muted);font-size:14px}
+.metarow span{display:inline-flex;align-items:center;gap:5px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* viewer */
+.viewer{position:fixed;inset:0;z-index:60;background:#0D0A10;color:#fff;display:flex;flex-direction:column}
+.v-top{display:flex;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top,0px) + 8px) max(10px,env(safe-area-inset-right,0px)) 8px max(10px,env(safe-area-inset-left,0px))}
+.v-top .iconbtn{color:#fff}
+.v-top .iconbtn:hover{background:rgba(255,255,255,.1)}
+.v-count{flex:1;text-align:center;font-weight:600;font-size:14px;opacity:.85}
+.v-track{flex:1;min-height:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior:contain}
+.v-track::-webkit-scrollbar{display:none}
+.v-slide{flex:0 0 100%;height:100%;scroll-snap-align:center;display:grid;place-items:center;margin:0;padding:0 4px;min-width:0}
+.v-slide img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.v-cap{padding:12px max(18px,env(safe-area-inset-left,0px)) calc(env(safe-area-inset-bottom,0px) + 16px);min-height:72px;display:flex;flex-direction:column;gap:2px}
+.v-cap .c{font-family:var(--f-hand);font-size:26px;line-height:1.15}
+.v-cap .d{font-size:12.5px;opacity:.7}
+.heart-on .ico{fill:#F0698F;stroke:#F0698F}
+
+/* trips */
+.tcard{display:flex;gap:14px;align-items:stretch;padding:12px;text-align:left;width:100%}
+.tthumb{width:76px;flex:none;border-radius:12px;overflow:hidden;background:var(--teal-soft);display:grid;place-items:center;font-size:34px;aspect-ratio:1}
+.tthumb img{width:100%;height:100%;object-fit:cover}
+.tbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;justify-content:center}
+.tbody h3{font-size:17px;font-weight:700;line-height:1.2}
+.tbody .meta{font-size:13px;color:var(--muted)}
+.tlist{display:flex;flex-direction:column;gap:12px}
+.thero{background:var(--trip-bg);color:#fff;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.thero .flag{font-size:30px;line-height:1}
+.thero h1{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.thero .meta{opacity:.9;font-size:14px}
+.thero .chip{background:rgba(255,255,255,.2);color:#fff}
+.tabs2{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:2px}
+.tabs2::-webkit-scrollbar{display:none}
+.tabs2 button{height:36px;padding:0 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);white-space:nowrap}
+.tabs2 button[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:none}
+.item{display:flex;gap:12px;align-items:flex-start;padding:14px;text-align:left;width:100%}
+.item .ib{width:38px;height:38px;border-radius:12px;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center;flex:none}
+.item .ib.pink{background:var(--soft);color:var(--accent)}
+.item .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.item .tx b{font-weight:600}
+.item .tx span{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.item .amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stack{display:flex;flex-direction:column;gap:10px}
+.day{padding:14px 16px;text-align:left;width:100%;display:flex;flex-direction:column;gap:6px}
+.day .dh{display:flex;align-items:baseline;gap:10px}
+.day .dn{font-family:var(--f-display);font-weight:800;font-size:15px;color:var(--teal)}
+.day .dd{font-weight:600;text-transform:capitalize}
+.day .txt{white-space:pre-wrap;overflow-wrap:anywhere}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--teal);border-radius:5px}
+.bar.over i{background:var(--accent)}
+.money{display:flex;flex-direction:column;gap:12px;padding:16px}
+.money .big{font-family:var(--f-display);font-weight:800;font-size:32px;line-height:1;font-variant-numeric:tabular-nums}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.split div{background:var(--bg);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
+.split b{font-variant-numeric:tabular-nums;font-size:17px}
+.settle{font-weight:600;color:var(--teal)}
+.pack{display:flex;flex-direction:column}
+.pack label{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);cursor:pointer}
+.pack label:first-child{border-top:0}
+.pack input[type=checkbox]{width:22px;height:22px;accent-color:var(--teal);flex:none}
+.pack .done span{text-decoration:line-through;color:var(--muted)}
+.pack span{flex:1;min-width:0;overflow-wrap:anywhere}
+.pack .who{font-size:12px;color:var(--muted);flex:none}
+.pack .del{color:var(--muted);flex:none;width:30px;height:30px;display:grid;place-items:center}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1;min-width:0}
+
+/* map */
+.map{padding:10px;overflow:hidden}
+.map svg{width:100%;height:auto;display:block}
+.map path{fill:var(--map-land);stroke:var(--surface);stroke-width:.4}
+.map path.v{fill:var(--accent)}
+.map path.w{fill:var(--map-wish)}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);padding:6px 6px 2px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.country{padding:14px 16px;display:flex;gap:12px;align-items:center}
+.country .fl{font-size:28px;line-height:1}
+.country .tx{flex:1;min-width:0}
+.country b{display:block}
+.country span{font-size:13px;color:var(--muted)}
+
+/* timeline */
+.tl{position:relative;display:flex;flex-direction:column;gap:22px;padding-left:22px}
+.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:repeating-linear-gradient(to bottom,var(--line) 0 6px,transparent 6px 11px)}
+.tl-year{font-family:var(--f-display);font-weight:800;font-size:44px;letter-spacing:-.04em;line-height:1;color:var(--accent);margin-left:-22px;padding-top:6px}
+.tl-it{position:relative;text-align:left;display:flex;flex-direction:column;gap:10px;width:100%}
+.tl-it::before{content:"";position:absolute;left:-22px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 3px var(--accent)}
+.tl-it.trip::before{box-shadow:inset 0 0 0 3px var(--teal)}
+.tl-it .d{font-size:13px;color:var(--muted);font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tl-it h3{font-size:20px;font-weight:700;line-height:1.15}
+.tl-it p{white-space:pre-wrap;overflow-wrap:anywhere}
+.tl-it .pola{width:min(78%,300px)}
+.tl-it:nth-of-type(odd) .pola{transform:rotate(-2deg)}
+.tl-it:nth-of-type(even) .pola{transform:rotate(1.6deg);align-self:flex-end;margin-right:6px}
+
+/* wishes */
+.wish{display:flex;gap:12px;align-items:flex-start;padding:14px}
+.wcheck{width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--line);display:grid;place-items:center;flex:none;color:transparent}
+.wcheck:hover{box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)}
+.wish.done .wcheck{background:var(--accent);box-shadow:none;color:var(--accent-ink)}
+.wish .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.wish h3{font-size:16.5px;font-weight:700;font-family:var(--f-body)}
+.wish p{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.wish .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* notes */
+.compose{display:flex;gap:8px;align-items:flex-end;padding:10px}
+.compose textarea{flex:1;min-width:0;border:0;background:transparent;resize:none;min-height:44px;max-height:140px;padding:10px 6px;outline:none}
+.compose .btn{width:46px;padding:0}
+.msgs{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;display:flex;flex-direction:column;gap:3px;align-self:flex-start}
+.msg .b{background:var(--surface);box-shadow:var(--shadow);border-radius:20px 20px 20px 6px;padding:10px 14px;font-family:var(--f-hand);font-size:23px;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg .m{font-size:11.5px;color:var(--muted);padding:0 8px}
+.msg.mine{align-self:flex-end;align-items:flex-end}
+.msg.mine .b{background:var(--accent);color:var(--accent-ink);border-radius:20px 20px 6px 20px}
+.msg.new .b{box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.daysep{align-self:center;font-size:12px;color:var(--muted);font-weight:600;padding:4px 0}
+
+/* forms & sheet */
+#sheet-root{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center}
+.scrim{position:absolute;inset:0;background:rgba(15,10,20,.45);animation:fade .2s}
+.sheet{position:relative;width:100%;max-width:620px;max-height:92%;overflow:auto;background:var(--bg);border-radius:24px 24px 0 0;padding:8px max(18px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 20px) max(18px,env(safe-area-inset-left,0px));animation:up .25s cubic-bezier(.2,.8,.2,1);overscroll-behavior:contain}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 14px}
+.sheet h2{font-size:22px;font-weight:800;margin-bottom:14px}
+.form{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>span{font-size:13px;font-weight:600;color:var(--muted)}
+.input,.form input:not([type=checkbox]):not([type=file]),.form select,.form textarea,.addrow input{width:100%;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--surface);padding:10px 12px;outline:none;font-size:16px}
+.form textarea{min-height:96px;resize:vertical}
+.form input:focus,.form select:focus,.form textarea:focus,.addrow input:focus{border-color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two>*{min-width:0}
+.radios{display:flex;gap:8px;flex-wrap:wrap}
+.radios label{flex:1;min-width:110px}
+.radios input{position:absolute;opacity:0;pointer-events:none}
+.radios span{display:flex;align-items:center;justify-content:center;height:44px;border-radius:12px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-weight:600;cursor:pointer;padding:0 10px;text-align:center}
+.radios input:checked+span{box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)}
+.radios input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.form-actions{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.upl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.upl figure{margin:0;display:flex;flex-direction:column;gap:6px}
+.upl img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:var(--line)}
+.upl input{min-height:40px!important;font-size:15px!important;padding:8px 10px!important}
+.progress{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.photo-pick{display:flex;gap:12px;align-items:center}
+.photo-pick img{width:72px;height:72px;object-fit:cover;border-radius:10px}
+.note-box{background:var(--surface);border-radius:14px;padding:12px 14px;font-size:14px;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+
+/* onboarding */
+.onb{min-height:100%;display:flex;flex-direction:column;gap:22px;padding-block:28px 40px}
+.onb .logo{font-family:var(--f-display);font-weight:800;font-size:64px;letter-spacing:-.05em;line-height:.9}
+.onb .logo i{font-style:normal;color:var(--accent)}
+.onb .lede{font-family:var(--f-hand);font-size:28px;line-height:1.1;color:var(--muted)}
+.who{display:flex;flex-direction:column;gap:12px}
+.who button{padding:18px;display:flex;align-items:center;gap:14px;text-align:left;font-size:18px;font-weight:700;font-family:var(--f-display)}
+.who button:disabled{opacity:.45}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--accent);font-weight:800;font-family:var(--f-display);font-size:18px;flex:none}
+.state{padding:60px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;color:var(--muted)}
+.spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp 1s linear infinite}
+
+#toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:100;background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px;max-width:calc(100% - 32px);text-align:center;box-shadow:var(--shadow);transition:opacity .25s,transform .25s}
+#toast.off{opacity:0;transform:translate(-50%,10px);pointer-events:none}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+@keyframes fade{from{opacity:0}}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:380px){.stats{grid-template-columns:repeat(2,1fr)}.cd b{font-size:28px}}
+</style>
+</head><body>
+<div id="app">
+  <header class="top"><div class="wrap" id="topbar"></div></header>
+  <main><div class="wrap"><div id="screen" class="screen"></div></div></main>
+  <nav class="nav" id="nav" hidden><div class="wrap">
+    <button data-act="tab" data-tab="inicio"><svg class="ico" viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+    <button data-act="tab" data-tab="albumes"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>Álbumes</button>
+    <button data-act="tab" data-tab="viajes"><svg class="ico" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Viajes</button>
+    <button data-act="tab" data-tab="historia"><svg class="ico" viewBox="0 0 24 24"><path d="M6 3v18"/><circle cx="6" cy="7" r="2.2"/><circle cx="6" cy="17" r="2.2"/><path d="M11 7h9M11 17h9M11 12h6"/></svg>Historia</button>
+    <button data-act="tab" data-tab="deseos"><svg class="ico" viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg>Deseos</button>
+  </div></nav>
+</div>
+<div id="sheet-root" hidden></div>
+<div id="viewer" class="viewer" hidden></div>
+<div id="toast" class="off" role="status" aria-live="polite"></div>
+
+<script>
+/* ============ helpers ============ */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const today = () => ymd(new Date());
+const pd = s => { if (!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const utc = s => { const [y,m,d] = s.split('-').map(Number); return Date.UTC(y, m-1, d); };
+const daysBetween = (a, b) => Math.round((utc(b) - utc(a)) / 864e5);
+const addDays = (s, n) => { const d = pd(s); d.setDate(d.getDate() + n); return ymd(d); };
+const fmt = (s, o = {day:'numeric', month:'short', year:'numeric'}) => s ? new Intl.DateTimeFormat('es-ES', o).format(pd(s)).replace('.', '') : '';
+const fmtLong = s => fmt(s, {day:'numeric', month:'long', year:'numeric'});
+const fmtRange = (a, b) => { if (!a) return 'Sin fechas'; if (!b || a === b) return fmt(a);
+  const A = pd(a), B = pd(b);
+  if (A.getFullYear() === B.getFullYear()) return `${fmt(a, {day:'numeric', month:'short'})} – ${fmt(b)}`;
+  return `${fmt(a)} – ${fmt(b)}`; };
+const plural = (n, s, p) => `${n} ${n === 1 ? s : (p || s + 's')}`;
+const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 127397 + c.charCodeAt(0))) : '';
+let regionNames; try { regionNames = new Intl.DisplayNames(['es'], {type:'region'}); } catch { regionNames = null; }
+const countryName = cc => { if (!cc) return ''; try { return regionNames?.of(cc) || cc; } catch { return cc; } };
+const CODES = 'AD AE AF AG AL AM AO AR AT AU AZ BA BB BD BE BF BG BH BI BJ BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CL CM CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FR GA GB GD GE GF GH GL GM GN GP GQ GR GT GW GY HK HN HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KM KN KP KR KW KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MG MK ML MM MN MO MQ MR MT MU MV MW MX MY MZ NA NC NE NG NI NL NO NP NZ OM PA PE PF PG PH PK PL PR PS PT PY QA RE RO RS RU RW SA SB SC SD SE SG SI SK SL SM SN SO SR SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TW TZ UA UG US UY UZ VA VC VE VN VU YE ZA ZM ZW'.split(' ');
+const COUNTRIES = CODES.map(c => [c, countryName(c)]).sort((a, b) => a[1].localeCompare(b[1], 'es'));
+/* Photos live in IndexedDB; <img> tags get a placeholder and load when they come into view. */
+const BL = new Map();
+const PIX = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+const bsrc = id => id ? (BL.has(id) ? `src="${BL.get(id)}"` : `src="${PIX}" data-b="${esc(id)}"`) : `src="${PIX}"`;
+async function loadB(img) {
+  const id = img?.dataset?.b; if (!id || img.dataset.l) return;
+  img.dataset.l = '1';
+  try {
+    let u = BL.get(id);
+    if (!u) { const b = await IDB.get('blobs', id); if (!b) return; u = URL.createObjectURL(b); BL.set(id, u); }
+    img.src = u; img.removeAttribute('data-b');
+  } catch (e) { console.error(e); delete img.dataset.l; }
+}
+const imgIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { imgIO.unobserve(e.target); loadB(e.target); } }), {rootMargin: '400px'}) : null;
+const hydrate = root => (root || document).querySelectorAll('img[data-b]:not([data-l])').forEach(i => imgIO ? imgIO.observe(i) : loadB(i));
+new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) { if (n.matches('img[data-b]')) hydrate(n.parentNode); else hydrate(n); } }).observe(document.documentElement, {childList: true, subtree: true});
+const live = obj => Object.entries(obj || {}).filter(([, v]) => v && typeof v === 'object').map(([id, v]) => ({id, ...v})).sort((a, b) => (a.at || 0) - (b.at || 0));
+const money = n => { try { return new Intl.NumberFormat('es-ES', {style:'currency', currency: S.cfg?.cur || 'EUR'}).format(n || 0); } catch { return (n || 0).toFixed(2); } };
+
+const I = {
+  heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1 7.8 7.7 7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>',
+  msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', back:'<path d="m15 18-6-6 6-6"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>', trash:'<path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  pin:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  cam:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  bed:'<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>',
+  plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  train:'<rect x="4" y="3" width="16" height="14" rx="3"/><path d="M4 11h16M12 3v8M8 21l2-4M16 21l-2-4"/><circle cx="8.5" cy="14" r=".6"/><circle cx="15.5" cy="14" r=".6"/>',
+  car:'<path d="M5 17H3v-5l2-5h14l2 5v5h-2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5M3 12h18"/>',
+  bus:'<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3"/>',
+  ship:'<path d="M2 20c2 1 4 1 6 0s4-1 6 0 4 1 6 0M4 16l-1-5h18l-1 5M12 11V3M7 11V7h10v4"/>',
+  card:'<rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>',
+  shuffle:'<path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/>',
+  send:'<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>', star:'<path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/>',
+  more:'<circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/>',
+  bag:'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  tl:'<path d="M6 3v18"/><circle cx="6" cy="7" r="2.2"/><circle cx="6" cy="17" r="2.2"/><path d="M11 7h9M11 17h9M11 12h6"/>',
+};
+const ic = (n, cls = '') => `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${I[n] || ''}</svg>`;
+
+const KINDS = {primera:'Primera cita', aniversario:'Aniversario', especial:'Momento especial', hito:'Hito', deseo:'Deseo cumplido', viaje:'Viaje', inicio:'El principio'};
+const WKINDS = {plan:'Plan', sitio:'Sitio', viaje:'Viaje'};
+const TKINDS = {vuelo:['Vuelo','plane'], tren:['Tren','train'], bus:['Autobús','bus'], coche:['Coche','car'], barco:['Barco','ship'], otro:['Otro','pin']};
+const ECATS = ['Alojamiento','Transporte','Comida','Actividades','Compras','Otros'];
+
+/* ============ on-device storage ============ */
+const VERSION = '1.0.0';
+const IDB = (() => {
+  let p;
+  const open = () => p ||= new Promise((res, rej) => {
+    const r = indexedDB.open('nido', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('docs'); r.result.createObjectStore('blobs'); };
+    r.onsuccess = () => res(r.result); r.onerror = () => { p = null; rej(r.error); };
+  });
+  const tx = async (st, mode, fn) => { const db = await open(); return new Promise((res, rej) => {
+    const t = db.transaction(st, mode); let out; const r = fn(t.objectStore(st));
+    if (r) r.onsuccess = () => { out = r.result; };
+    t.oncomplete = () => res(out); t.onerror = t.onabort = () => rej(t.error || new Error('idb')); }); };
+  return {
+    get: (st, k) => tx(st, 'readonly', s => s.get(k)),
+    put: (st, k, v) => tx(st, 'readwrite', s => s.put(v, k)),
+    del: (st, k) => tx(st, 'readwrite', s => s.delete(k)),
+    count: st => tx(st, 'readonly', s => s.count()),
+    keys: st => tx(st, 'readonly', s => s.getAllKeys()),
+    clear: st => tx(st, 'readwrite', s => s.clear()),
+    all: async st => { const db = await open(); return new Promise((res, rej) => {
+      const out = [], t = db.transaction(st), c = t.objectStore(st).openCursor();
+      c.onsuccess = () => { const cu = c.result; if (cu) { out.push([cu.key, cu.value]); cu.continue(); } };
+      t.oncomplete = () => res(out); t.onerror = () => rej(t.error); }); },
+  };
+})();
+const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
+function merge(t, patch) {
+  for (const [k, v] of Object.entries(patch)) {
+    if (v === null) delete t[k];
+    else if (isObj(v)) t[k] = merge(isObj(t[k]) ? t[k] : {}, v);
+    else t[k] = v;
+  }
+  return t;
+}
+/* Same small API the app used for its cloud database, but kept on this phone. */
+const LDB = {
+  docs: new Map(), subs: [],
+  async load() { for (const [k, v] of await IDB.all('docs')) this.docs.set(k, v); },
+  async write(path, val) {
+    if (val == null) { await IDB.del('docs', path); this.docs.delete(path); }
+    else { await IDB.put('docs', path, val); this.docs.set(path, val); }
+    const c = path.split('/')[0];
+    this.subs.forEach(s => (s.path === path || s.c === c) && s.fire());
+  },
+  collection(c) {
+    const q = {};
+    const api = {
+      add: async data => { const id = rid(); await LDB.write(`${c}/${id}`, data); return {id}; },
+      orderBy: (f, dir) => { q.by = [f, dir]; return api; },
+      limit: n => { q.lim = n; return api; },
+      onSnapshot: fn => {
+        const fire = () => {
+          let docs = [...LDB.docs].filter(([k]) => k.startsWith(c + '/')).map(([k, v]) => ({id: k.slice(c.length + 1), data: () => v}));
+          if (q.by) { const [f, d] = q.by, m = d === 'desc' ? -1 : 1; docs.sort((a, b) => ((a.data()[f] ?? 0) - (b.data()[f] ?? 0)) * m); }
+          if (q.lim) docs = docs.slice(0, q.lim);
+          fn({docs});
+        };
+        LDB.subs.push({c, fire}); fire();
+      },
+    };
+    return api;
+  },
+  doc(path) {
+    return {
+      set: data => LDB.write(path, data),
+      update: async data => { const cur = LDB.docs.get(path); if (!cur) throw Object.assign(new Error('missing'), {code: 'missing'}); await LDB.write(path, merge(structuredClone(cur), data)); },
+      delete: () => LDB.write(path, null),
+      onSnapshot: fn => { const fire = () => { const v = LDB.docs.get(path); fn({exists: v !== undefined, data: () => v, metadata: {fromCache: false}}); }; LDB.subs.push({path, fire}); fire(); },
+    };
+  },
+};
+const LA = {
+  upload: async b => { const id = rid() + rid(); await IDB.put('blobs', id, b); return {id}; },
+  delete: async id => { await IDB.del('blobs', id); const u = BL.get(id); if (u) { URL.revokeObjectURL(u); BL.delete(id); } },
+};
+
+/* ============ state ============ */
+const S = {
+  cfg: undefined, albums: [], photos: [], trips: [], moments: [], wishes: [], notes: [],
+  uid: null, seen: 0, db: null, assets: null, err: null, slow: false,
+  tab: 'inicio', album: null, trip: null, tripTab: 'plan', tripsSeg: 'prox', wishSeg: 'pend', albumSeg: 'todos',
+  otd: 0, viewer: null,
+};
+const mySlot = () => lsGet('nido-slot') || 'a';
+const other = s => s === 'a' ? 'b' : 'a';
+const nameOf = s => (s === 'a' ? S.cfg?.a : s === 'b' ? S.cfg?.b : '') || (s === 'a' ? 'Uno' : 'Otro');
+function lsGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
+
+let toastT;
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.remove('off'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.add('off'), 2600); }
+function errMsg(e) {
+  const c = e?.code;
+  if (e?.name === 'QuotaExceededError') return 'El móvil no tiene espacio para guardar más. Libera espacio y prueba otra vez.';
+  if (c === 'invalid_argument' || c === 'not_granted') return 'No tienes permiso para guardar. Pide acceso de Editor.';
+  if (c === 'quota_exceeded' || c === 'quota_or_state') return 'Se ha llenado el espacio. Borra algo para seguir.';
+  if (c === 'too_large') return 'Esa foto es demasiado grande.';
+  if (c === 'unsupported_type') return 'Ese formato de imagen no se puede subir.';
+  if (c === 'rate_limited' || c === 'resource_exhausted') return 'Demasiado rápido. Espera un momento y vuelve a probar.';
+  return 'No se pudo guardar. Comprueba la conexión y prueba otra vez.';
+}
+async function W(p, ok) { try { const r = await p; if (ok) toast(ok); return r; } catch (e) { console.error(e); toast(errMsg(e)); throw e; } }
+const col = c => S.db.collection(c);
+const docRef = (c, id) => S.db.doc(`${c}/${id}`);
+
+/* ============ derived data ============ */
+function tripState(t) {
+  const td = today(); if (!t.start) return 'plan';
+  const end = t.end || t.start;
+  if (end < td) return 'done'; if (t.start <= td) return 'now'; return 'plan';
+}
+const photoDate = p => p.taken || S.albums.find(a => a.id === p.albumId)?.date || (p.at ? ymd(new Date(p.at)) : '');
+const sortPhotos = list => [...list].sort((a, b) => (photoDate(a) || '').localeCompare(photoDate(b) || '') || (a.at || 0) - (b.at || 0));
+const albumPhotos = id => sortPhotos(S.photos.filter(p => p.albumId === id));
+function albumCover(a) {
+  if (!a) return null;
+  const c = a.cover && S.photos.find(p => p.id === a.cover);
+  return c || albumPhotos(a.id)[0] || null;
+}
+function nextAnniv() {
+  const list = [];
+  if (S.cfg?.start) list.push({label: 'Aniversario', date: S.cfg.start});
+  S.moments.filter(m => m.kind === 'primera' && m.date).forEach(m => list.push({label: 'Aniversario de la primera cita', date: m.date}));
+  const td = today(), y = new Date().getFullYear();
+  let best = null;
+  for (const it of list) {
+    const md = it.date.slice(5);
+    let nd = `${y}-${md}`; if (md === '02-29' && !pd(nd)) nd = `${y}-03-01`;
+    if (nd < td) nd = `${y + 1}-${md}`;
+    const years = Number(nd.slice(0, 4)) - Number(it.date.slice(0, 4));
+    if (years < 1) continue;
+    const d = daysBetween(td, nd);
+    if (!best || d < best.days) best = {...it, next: nd, days: d, years};
+  }
+  return best;
+}
+function nextTrip() {
+  return S.trips.filter(t => t.start && tripState(t) !== 'done').sort((a, b) => a.start.localeCompare(b.start))[0] || null;
+}
+function places() {
+  const map = {};
+  S.trips.filter(t => t.country && tripState(t) !== 'plan').forEach(t => {
+    const c = map[t.country] ||= {cc: t.country, cities: new Set(), trips: 0};
+    c.trips++; (t.dest || '').split(/[,·\/]| y /).map(s => s.trim()).filter(Boolean).forEach(x => c.cities.add(x));
+  });
+  return Object.values(map).sort((a, b) => countryName(a.cc).localeCompare(countryName(b.cc), 'es'));
+}
+function stats() {
+  const pl = places();
+  const cities = new Set(); pl.forEach(p => p.cities.forEach(c => cities.add(c.toLowerCase() + '|' + p.cc)));
+  return {
+    countries: pl.length, cities: cities.size,
+    trips: S.trips.filter(t => tripState(t) === 'done').length,
+    planned: S.trips.filter(t => tripState(t) !== 'done').length,
+    photos: S.photos.length, favs: S.photos.filter(p => p.fav).length, albums: S.albums.length,
+    moments: S.moments.length, wishesDone: S.wishes.filter(w => w.done).length, wishes: S.wishes.length,
+  };
+}
+function unread() { const me = mySlot(); return S.notes.filter(n => n.by !== me && (n.at || 0) > S.seen).length; }
+function togetherParts() {
+  if (!S.cfg?.start) return null;
+  const a = pd(S.cfg.start), b = pd(today());
+  let y = b.getFullYear() - a.getFullYear(), m = b.getMonth() - a.getMonth(), d = b.getDate() - a.getDate();
+  if (d < 0) { m--; d += new Date(b.getFullYear(), b.getMonth(), 0).getDate(); }
+  if (m < 0) { y--; m += 12; }
+  return {y, m, d, total: daysBetween(S.cfg.start, today())};
+}
+function onThisDay() {
+  const td = today(), md = td.slice(5), yr = td.slice(0, 4);
+  const pool = [];
+  S.photos.forEach(p => { const d = photoDate(p); if (d && d.slice(5) === md && d.slice(0, 4) < yr) pool.push({t: 'p', p, d}); });
+  S.moments.forEach(m => { if (m.date && m.date.slice(5) === md && m.date.slice(0, 4) < yr) pool.push({t: 'm', m, d: m.date}); });
+  if (pool.length && S.otd === 0) return {...pool[0], same: true, pool};
+  const all = [...S.photos.map(p => ({t: 'p', p, d: photoDate(p)})), ...S.moments.filter(m => m.thumb || m.text).map(m => ({t: 'm', m, d: m.date}))];
+  const src = pool.length ? pool : all; if (!src.length) return null;
+  const seed = Number(td.replace(/-/g, '')) + S.otd * 7919;
+  const it = src[seed % src.length];
+  return {...it, same: !!pool.length};
+}
+
+/* ============ render ============ */
+let raf = 0;
+function schedule() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); }
+
+function render() {
+  const scr = $('#screen'), a = document.activeElement;
+  let keep = null;
+  if (a && a.id && scr.contains(a) && ('value' in a)) keep = {id: a.id, v: a.value, s: a.selectionStart, e: a.selectionEnd};
+  const {top, body, nav} = view();
+  $('#topbar').innerHTML = top; scr.innerHTML = body;
+  $('#nav').hidden = !nav;
+  document.querySelectorAll('#nav [data-tab]').forEach(b => b.toggleAttribute('aria-current', false) || (b.dataset.tab === S.tab && b.setAttribute('aria-current', 'page')));
+  if (keep) { const n = document.getElementById(keep.id); if (n) { n.value = keep.v; n.focus({preventScroll: true}); try { n.setSelectionRange(keep.s, keep.e); } catch {} } }
+  if (S.viewer) updateViewer();
+}
+
+function brandTop() {
+  const u = unread();
+  return `<div class="brand">Nido<i>.</i></div><div class="spacer"></div>
+    <button class="iconbtn" data-act="tab" data-tab="notas" aria-label="Notas">${ic('msg')}${u ? `<span class="badge">${u}</span>` : ''}</button>
+    <button class="iconbtn" data-act="settings" aria-label="Ajustes">${ic('sliders')}</button>`;
+}
+const backTop = (title, act, extra = '') => `<button class="iconbtn" data-act="${act}" aria-label="Volver">${ic('back')}</button><div class="top-title">${esc(title)}</div>${extra}`;
+
+function view() {
+  if (S.err === 'nodb') return {top: '<div class="brand">Nido<i>.</i></div>', body: `<div class="state">${ic('heart')}<h3>No se pudo abrir Nido</h3><p>El móvil no deja usar el almacenamiento de la app. Ciérrala del todo y vuelve a abrirla desde su icono.</p></div>`};
+  if (S.cfg === undefined) return {top: '<div class="brand">Nido<i>.</i></div>', body: `<div class="state"><div class="spin"></div><p>${S.slow ? 'Cuesta conectar. Revisa tu conexión; seguimos intentándolo.' : 'Abriendo vuestro nido…'}</p></div>`};
+  if (S.cfg === null) return {top: '', body: vOnboard()};
+  if (!mySlot()) return {top: '', body: vWho()};
+  if (S.tab === 'albumes' && S.album) return vAlbum();
+  if (S.tab === 'viajes' && S.trip) return vTrip();
+  const top = S.tab === 'notas' ? backTop('Notas', 'tab" data-tab="inicio') : brandTop();
+  const body = ({inicio: vHome, albumes: vAlbums, viajes: vTrips, historia: vTimeline, deseos: vWishes, notas: vNotes}[S.tab] || vHome)();
+  return {top, body, nav: true};
+}
+
+/* ---- onboarding ---- */
+function vOnboard() {
+  return `<div class="onb">
+    <div><div class="logo">Nido<i>.</i></div><p class="lede">vuestros recuerdos, álbumes y viajes, en un solo sitio</p></div>
+    <form class="form card pad" id="f-onb">
+      <label class="field"><span>Tu nombre</span><input id="o-a" name="a" required maxlength="30" autocomplete="given-name"></label>
+      <label class="field"><span>El nombre de tu pareja</span><input id="o-b" name="b" required maxlength="30"></label>
+      <label class="field"><span>¿Desde cuándo estáis juntos?</span><input id="o-s" name="start" type="date" required max="${today()}"></label>
+      <button class="btn block" type="submit">Crear nuestro nido</button>
+    </form>
+    <p class="small muted">Vuestros recuerdos y fotos se guardan en este móvil. Descarga una copia de vez en cuando desde <b>Ajustes</b>.</p>
+  </div>`;
+}
+function vWho() {
+  const taken = Object.values(S.cfg.members || {});
+  const b = s => `<button class="card" data-act="iam" data-slot="${s}" ${taken.includes(s) ? 'disabled' : ''}><span class="avatar">${esc(nameOf(s)[0] || '?')}</span>${esc(nameOf(s))}${taken.includes(s) ? '<span class="small muted" style="margin-left:auto;font-family:var(--f-body);font-weight:500">ya ha entrado</span>' : ''}</button>`;
+  return `<div class="onb"><div><div class="logo">Nido<i>.</i></div><p class="lede">${esc(S.cfg.a)} &amp; ${esc(S.cfg.b)}</p></div>
+    <h2>¿Quién eres?</h2><div class="who">${b('a')}${b('b')}</div>
+    <p class="small muted">Solo lo eliges una vez en cada cuenta. Sirve para saber quién sube cada foto, quién paga y quién escribe cada nota.</p></div>`;
+}
+
+/* ---- home ---- */
+function vHome() {
+  const tp = togetherParts(), nt = nextTrip(), an = nextAnniv(), st = stats(), o = onThisDay();
+  const me = mySlot();
+  const lastIn = S.notes.find(n => n.by !== me);
+  const parts = tp ? [tp.y && plural(tp.y, 'año'), tp.m && plural(tp.m, 'mes', 'meses'), plural(tp.d, 'día')].filter(Boolean).join(', ') : '';
+  let otdHtml = '';
+  if (o) {
+    const yrs = o.d ? Number(today().slice(0, 4)) - Number(o.d.slice(0, 4)) : 0;
+    const label = o.same ? (yrs ? `Un día como hoy · hace ${plural(yrs, 'año')}` : 'Un día como hoy') : 'Recuerdo al azar';
+    const img = o.t === 'p' ? o.p.thumb : o.m.thumb;
+    const cap = o.t === 'p' ? (o.p.caption || '') : o.m.title;
+    const title = o.t === 'p' ? (S.albums.find(a => a.id === o.p.albumId)?.title || 'Una foto') : o.m.title;
+    otdHtml = `<section class="card otd">
+      ${img ? `<button class="pola" data-act="${o.t === 'p' ? 'openPhoto' : 'tab'}" data-id="${o.t === 'p' ? o.p.id : ''}" data-tab="historia"><img ${bsrc(img)} alt="" loading="lazy"><span class="cap">${esc(cap)}</span></button>` : `<div class="pola"><div style="aspect-ratio:4/5;display:grid;place-items:center;background:var(--soft);color:var(--accent);border-radius:2px">${ic('heart')}</div><span class="cap"></span></div>`}
+      <div class="otd-txt"><span class="eyebrow">${label}</span><h3>${esc(title)}</h3><p class="small muted">${esc(fmtLong(o.d))}</p>
+      ${o.t === 'm' && o.m.text ? `<p class="small" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${esc(o.m.text)}</p>` : ''}
+      <button class="link" data-act="shuffle" style="align-self:flex-start;display:inline-flex;gap:6px;align-items:center">${ic('shuffle', 'sm')} Otro recuerdo</button></div></section>`;
+  } else {
+    otdHtml = `<section class="card pad empty" style="padding:24px">${ic('cam')}<h3>Un día como hoy</h3><p>Cuando subáis fotos o guardéis momentos, aquí aparecerá un recuerdo de este mismo día en años anteriores.</p><button class="btn sm" data-act="tab" data-tab="albumes">Añadir las primeras fotos</button></section>`;
+  }
+  return `
+  <section class="hero">
+    <div class="hero-names">${esc(S.cfg.a)} &amp; ${esc(S.cfg.b)}</div>
+    ${tp ? `<div class="days-big">${tp.total.toLocaleString('es-ES')}</div><div class="days-label">días juntos</div>
+    <div class="days-sub">${parts} · desde el ${esc(fmtLong(S.cfg.start))}</div>` : `<div class="days-label" style="margin-top:12px">Añade la fecha en que empezasteis</div>`}
+  </section>
+  <div class="cd-row">
+    ${nt ? `<button class="card cd trip" data-act="openTrip" data-id="${nt.id}"><span class="eyebrow">Próximo viaje</span>
+      ${tripState(nt) === 'now' ? `<b>Ahora</b><span class="t">${esc(nt.dest)}</span><span class="small muted">¡Estáis de viaje!</span>` :
+      `<b>${daysBetween(today(), nt.start)}</b><span class="t">${flag(nt.country)} ${esc(nt.dest)}</span><span class="small muted">${daysBetween(today(), nt.start) === 1 ? 'día' : 'días'} · ${esc(fmt(nt.start, {day:'numeric', month:'short'}))}</span>`}</button>`
+    : `<button class="card cd trip" data-act="newTrip"><span class="eyebrow">Próximo viaje</span><b>—</b><span class="t">Planear uno</span><span class="small muted">Toca para empezar</span></button>`}
+    ${an ? `<div class="card cd ann"><span class="eyebrow">${an.days === 0 ? '¡Hoy!' : 'Aniversario'}</span><b>${an.days === 0 ? '♥' : an.days}</b><span class="t">${plural(an.years, 'año')}</span><span class="small muted">${an.days === 0 ? esc(an.label) : `${an.days === 1 ? 'día' : 'días'} · ${esc(fmt(an.next, {day:'numeric', month:'short'}))}`}</span></div>`
+    : `<div class="card cd ann"><span class="eyebrow">Aniversario</span><b>—</b><span class="t">Primer año</span><span class="small muted">Llegará pronto</span></div>`}
+  </div>
+  ${otdHtml}
+  <section class="card notep">
+    <div class="sec-h"><span class="eyebrow">${lastIn ? (lastIn.at > S.seen ? `Nota nueva de ${esc(nameOf(lastIn.by))}` : `Última nota de ${esc(nameOf(lastIn.by))}`) : 'Notas'}</span><button class="link" data-act="tab" data-tab="notas">${lastIn ? 'Ver todas' : 'Escribir'}</button></div>
+    ${lastIn ? `<q>${esc(lastIn.text)}</q>` : `<p class="muted">Deja una nota corta para ${esc(nameOf(other(me)))}. Le aparecerá aquí al abrir la app.</p>`}
+  </section>
+  <section class="sec">
+    <div class="sec-h"><h2>En números</h2></div>
+    <div class="stats">
+      ${[['countries', 'países'], ['cities', 'ciudades'], ['trips', 'viajes hechos'], ['photos', 'fotos'], ['albums', 'álbumes'], ['favs', 'favoritas']].map(([k, l]) => `<div class="card stat"><b>${st[k]}</b><span>${l}</span></div>`).join('')}
+    </div>
+    <div class="stats" style="grid-template-columns:repeat(2,1fr)">
+      <div class="card stat"><b>${st.moments}</b><span>momentos en la historia</span></div>
+      <div class="card stat"><b>${st.wishesDone}<span style="font-size:18px;color:var(--muted)">/${st.wishes}</span></b><span>deseos cumplidos</span></div>
+    </div>
+  </section>`;
+}
+
+/* ---- albums ---- */
+function vAlbums() {
+  const seg = `<div class="seg"><button data-act="seg" data-k="albumSeg" data-v="todos" aria-pressed="${S.albumSeg === 'todos'}">Álbumes</button><button data-act="seg" data-k="albumSeg" data-v="favs" aria-pressed="${S.albumSeg === 'favs'}">Favoritas</button></div>`;
+  if (S.albumSeg === 'favs') {
+    const favs = sortPhotos(S.photos.filter(p => p.fav)).reverse();
+    return `${seg}${favs.length ? `<p class="small muted">${plural(favs.length, 'foto favorita', 'fotos favoritas')}</p>${pgrid(favs, 'favs')}` : `<div class="empty">${ic('heart')}<h3>Sin favoritas todavía</h3><p>Abre una foto y toca el corazón para guardarla aquí.</p></div>`}`;
+  }
+  const list = [...S.albums].sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.at || 0) - (a.at || 0));
+  return `${seg}
+  ${list.length ? `<div class="agrid">${list.map(a => {
+    const c = albumCover(a), n = S.photos.filter(p => p.albumId === a.id).length;
+    return `<button class="acard" data-act="openAlbum" data-id="${a.id}"><div class="acover">${c ? `<img ${bsrc(c.thumb)} alt="" loading="lazy">` : ic('image')}${n ? `<span class="cnt">${n}</span>` : ''}</div>
+      <div><h3>${esc(a.title)}</h3><div class="meta">${esc([fmt(a.date, {month:'short', year:'numeric'}), a.place].filter(Boolean).join(' · ') || 'Sin fecha')}</div></div></button>`;
+  }).join('')}</div>` : `<div class="empty">${ic('image')}<h3>Vuestro primer álbum</h3><p>Crea un álbum por viaje, evento o mes y sube vuestras fotos.</p></div>`}
+  <button class="fab" data-act="newAlbum" aria-label="Nuevo álbum">${ic('plus')}</button>`;
+}
+function pgrid(list, ctx) {
+  return `<div class="pgrid">${list.map((p, i) => `<button data-act="openPhoto" data-id="${p.id}" data-ctx="${ctx}" aria-label="Ver foto ${i + 1}"><img ${bsrc(p.thumb)} alt="${esc(p.caption || '')}" loading="lazy">${p.fav ? `<span class="fav">${ic('heart')}</span>` : ''}</button>`).join('')}</div>`;
+}
+function vAlbum() {
+  const a = S.albums.find(x => x.id === S.album);
+  if (!a) { S.album = null; return view(); }
+  const ps = albumPhotos(a.id), trip = a.tripId && S.trips.find(t => t.id === a.tripId);
+  return {nav: true, top: backTop(a.title, 'closeAlbum', `<button class="iconbtn" data-act="editAlbum" data-id="${a.id}" aria-label="Editar álbum">${ic('edit')}</button>`), body: `
+    <div class="ahead"><h1>${esc(a.title)}</h1>
+      <div class="metarow">${a.date ? `<span>${ic('cal', 'sm')}${esc(fmtLong(a.date))}</span>` : ''}${a.place ? `<span>${ic('pin', 'sm')}${esc(a.place)}</span>` : ''}<span>${plural(ps.length, 'foto')}</span></div>
+      ${trip ? `<button class="chip teal" data-act="openTrip" data-id="${trip.id}" style="align-self:flex-start">${ic('plane', 'sm')} Viaje a ${esc(trip.dest)}</button>` : ''}
+    </div>
+    <div class="actions">${S.assets ? `<button class="btn" data-act="addPhotos" data-id="${a.id}">${ic('cam', 'sm')} Añadir fotos</button>` : `<p class="note-box">Para subir fotos necesitas acceso de <b>Editor</b> a esta app.</p>`}</div>
+    ${ps.length ? pgrid(ps, 'album:' + a.id) : `<div class="empty">${ic('cam')}<h3>Álbum vacío</h3><p>Sube varias fotos a la vez y ponles un pie de foto si queréis.</p></div>`}`};
+}
+
+/* ---- trips ---- */
+function tripCard(t) {
+  const st = tripState(t), al = t.albumId && S.albums.find(a => a.id === t.albumId), c = albumCover(al);
+  const dleft = t.start ? daysBetween(today(), t.start) : null;
+  return `<button class="card tcard" data-act="openTrip" data-id="${t.id}">
+    <div class="tthumb">${c ? `<img ${bsrc(c.thumb)} alt="" loading="lazy">` : (flag(t.country) || ic('plane'))}</div>
+    <div class="tbody"><h3>${esc(t.dest)}</h3><div class="meta">${flag(t.country)} ${esc(countryName(t.country))}</div><div class="meta">${esc(fmtRange(t.start, t.end))}</div>
+      <div>${st === 'now' ? '<span class="chip teal">De viaje ahora</span>' : st === 'plan' ? (dleft != null ? `<span class="chip teal">En ${plural(dleft, 'día')}</span>` : '<span class="chip gray">Por fechar</span>') : '<span class="chip">Hecho</span>'}</div></div></button>`;
+}
+function vTrips() {
+  const seg = `<div class="seg"><button data-act="seg" data-k="tripsSeg" data-v="prox" aria-pressed="${S.tripsSeg === 'prox'}">Planeados</button><button data-act="seg" data-k="tripsSeg" data-v="hechos" aria-pressed="${S.tripsSeg === 'hechos'}">Hechos</button><button data-act="seg" data-k="tripsSeg" data-v="lugares" aria-pressed="${S.tripsSeg === 'lugares'}">Lugares</button></div>`;
+  if (S.tripsSeg === 'lugares') return seg + vPlaces();
+  const done = S.tripsSeg === 'hechos';
+  const list = S.trips.filter(t => (tripState(t) === 'done') === done).sort((a, b) => done ? (b.start || '').localeCompare(a.start || '') : (a.start || '9999').localeCompare(b.start || '9999'));
+  return `${seg}${list.length ? `<div class="tlist">${list.map(tripCard).join('')}</div>` : `<div class="empty">${ic('plane')}<h3>${done ? 'Aún no hay viajes hechos' : 'Ningún viaje en marcha'}</h3><p>${done ? 'Los viajes pasan aquí solos cuando termina su última fecha.' : 'Apuntad destino y fechas; luego id añadiendo vuelos, alojamiento, días y gastos.'}</p></div>`}
+  <button class="fab" data-act="newTrip" aria-label="Nuevo viaje">${ic('plus')}</button>`;
+}
+let worldCache = {key: '', svg: ''};
+function worldSvg(visited, wished) {
+  const W = window.__WORLD; if (!W) return '';
+  const key = [...visited].join() + '|' + [...wished].join();
+  if (worldCache.key === key && worldCache.svg) return worldCache.svg;
+  const svg = `<svg viewBox="0 0 ${W.width} ${Math.ceil(W.height)}" role="img" aria-label="Mapa de países visitados">${Object.entries(W.paths).map(([cc, p]) => `<path d="${p.path}" class="${visited.has(cc) ? 'v' : wished.has(cc) ? 'w' : ''}"><title>${esc(countryName(cc))}</title></path>`).join('')}</svg>`;
+  worldCache = {key, svg}; return svg;
+}
+function vPlaces() {
+  const pl = places(), visited = new Set(pl.map(p => p.cc));
+  const wished = new Set([...S.wishes.filter(w => !w.done && w.country).map(w => w.country), ...S.trips.filter(t => tripState(t) === 'plan' && t.country).map(t => t.country)]);
+  const svg = worldSvg(visited, wished);
+  return `<div class="card map">${svg || '<div class="state" style="padding:40px 10px"><div class="spin"></div><p>Cargando mapa…</p></div>'}
+    <div class="legend"><span><i style="background:var(--accent)"></i>Hemos estado</span><span><i style="background:var(--map-wish)"></i>Queremos ir</span></div></div>
+    ${pl.length ? `<div class="stack">${pl.map(p => `<div class="card country"><span class="fl">${flag(p.cc)}</span><div class="tx"><b>${esc(countryName(p.cc))}</b><span>${esc([...p.cities].join(', '))}</span></div><span class="chip gray">${plural(p.trips, 'viaje')}</span></div>`).join('')}</div>`
+    : `<div class="empty">${ic('globe')}<h3>El mapa espera</h3><p>Cada viaje terminado pinta su país. Los deseos y viajes planeados con país salen en rosa claro.</p></div>`}`;
+}
+function vTrip() {
+  const t = S.trips.find(x => x.id === S.trip);
+  if (!t) { S.trip = null; return view(); }
+  const st = tripState(t), dleft = t.start ? daysBetween(today(), t.start) : null;
+  const tabs = [['plan', 'Plan'], ['dias', 'Días'], ['gastos', 'Gastos'], ['maleta', 'Maleta'], ['fotos', 'Fotos']];
+  let body = '';
+  if (S.tripTab === 'plan') body = tPlan(t);
+  else if (S.tripTab === 'dias') body = tDays(t);
+  else if (S.tripTab === 'gastos') body = tMoney(t);
+  else if (S.tripTab === 'maleta') body = tPack(t);
+  else body = tPhotos(t);
+  return {nav: true, top: backTop(t.dest, 'closeTrip', `<button class="iconbtn" data-act="editTrip" data-id="${t.id}" aria-label="Editar viaje">${ic('edit')}</button>`), body: `
+    <section class="thero"><span class="flag">${flag(t.country) || '✈'}</span><h1>${esc(t.dest)}</h1>
+      <div class="meta">${esc(countryName(t.country))}${t.country ? ' · ' : ''}${esc(fmtRange(t.start, t.end))}${t.start && t.end ? ` · ${plural(daysBetween(t.start, t.end) + 1, 'día')}` : ''}</div>
+      <div>${st === 'now' ? '<span class="chip">Estáis aquí ahora</span>' : st === 'done' ? '<span class="chip">Viaje hecho</span>' : dleft != null ? `<span class="chip">Faltan ${plural(dleft, 'día')}</span>` : '<span class="chip">Sin fechas aún</span>'}</div></section>
+    <div class="tabs2">${tabs.map(([k, l]) => `<button data-act="tripTab" data-v="${k}" aria-pressed="${S.tripTab === k}">${l}</button>`).join('')}</div>
+    ${body}`};
+}
+function tPlan(t) {
+  const lodg = live(t.lodging), tr = live(t.transport).sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || ''));
+  return `<section class="sec"><div class="sec-h"><h2>Alojamiento</h2><button class="link" data-act="lodging" data-id="${t.id}">+ Añadir</button></div>
+    ${lodg.length ? `<div class="stack">${lodg.map(l => `<button class="card item" data-act="lodging" data-id="${t.id}" data-sub="${l.id}"><span class="ib">${ic('bed', 'sm')}</span><span class="tx"><b>${esc(l.name)}</b><span>${esc([l.from && l.to ? fmtRange(l.from, l.to) : fmt(l.from), l.address].filter(Boolean).join(' · '))}</span>${l.notes ? `<span>${esc(l.notes)}</span>` : ''}</span></button>`).join('')}</div>` : '<p class="muted small">Hotel, apartamento, casa de amigos…</p>'}</section>
+    <section class="sec"><div class="sec-h"><h2>Transporte</h2><button class="link" data-act="transport" data-id="${t.id}">+ Añadir</button></div>
+    ${tr.length ? `<div class="stack">${tr.map(x => { const k = TKINDS[x.kind] || TKINDS.otro; return `<button class="card item" data-act="transport" data-id="${t.id}" data-sub="${x.id}"><span class="ib">${ic(k[1], 'sm')}</span><span class="tx"><b>${esc(x.from || '?')} → ${esc(x.to || '?')}</b><span>${esc([k[0], fmt(x.date, {weekday:'short', day:'numeric', month:'short'}), x.time, x.ref && 'Ref. ' + x.ref].filter(Boolean).join(' · '))}</span></span></button>`; }).join('')}</div>` : '<p class="muted small">Vuelos, trenes, coche de alquiler…</p>'}</section>
+    <section class="sec"><div class="sec-h"><h2>Notas del viaje</h2><button class="link" data-act="tripNotes" data-id="${t.id}">${t.notes ? 'Editar' : '+ Añadir'}</button></div>
+    ${t.notes ? `<div class="card pad" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(t.notes)}</div>` : '<p class="muted small">Ideas, reservas pendientes, restaurantes…</p>'}</section>`;
+}
+function tDays(t) {
+  if (!t.start) return `<div class="empty">${ic('cal')}<h3>Sin fechas</h3><p>Añade las fechas del viaje para tener un hueco por cada día.</p><button class="btn sm" data-act="editTrip" data-id="${t.id}">Poner fechas</button></div>`;
+  const n = Math.min(60, daysBetween(t.start, t.end || t.start) + 1), it = t.itinerary || {};
+  return `<div class="stack">${Array.from({length: n}, (_, i) => { const d = addDays(t.start, i), txt = it[d];
+    return `<button class="card day" data-act="dayEdit" data-id="${t.id}" data-day="${d}"><div class="dh"><span class="dn">Día ${i + 1}</span><span class="dd">${esc(fmt(d, {weekday:'long', day:'numeric', month:'long'}))}</span></div>${txt ? `<div class="txt">${esc(txt)}</div>` : '<div class="muted small">Toca para planear este día</div>'}</button>`; }).join('')}</div>`;
+}
+function tMoney(t) {
+  const ex = live(t.expenses).sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.at || 0) - (a.at || 0));
+  const total = ex.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+  const pa = ex.filter(e => e.payer === 'a').reduce((s, e) => s + (Number(e.amount) || 0), 0), pb = total - pa;
+  const diff = pa - total / 2, budget = Number(t.budget) || 0;
+  const settle = Math.abs(diff) < 0.01 ? 'Estáis en paz: habéis pagado lo mismo.' : diff > 0 ? `${esc(nameOf('b'))} debe ${money(diff)} a ${esc(nameOf('a'))}` : `${esc(nameOf('a'))} debe ${money(-diff)} a ${esc(nameOf('b'))}`;
+  return `<section class="card money">
+    <div class="sec-h"><span class="eyebrow">Gastado</span><button class="link" data-act="editTrip" data-id="${t.id}">${budget ? 'Presupuesto' : '+ Presupuesto'}</button></div>
+    <div class="big">${money(total)}</div>
+    ${budget ? `<div class="bar ${total > budget ? 'over' : ''}"><i style="width:${Math.min(100, total / budget * 100)}%"></i></div><div class="small muted">${total > budget ? `Os habéis pasado ${money(total - budget)} del presupuesto de ${money(budget)}` : `Quedan ${money(budget - total)} de ${money(budget)}`}</div>` : ''}
+    <div class="split"><div><span class="small muted">Ha pagado ${esc(nameOf('a'))}</span><b>${money(pa)}</b></div><div><span class="small muted">Ha pagado ${esc(nameOf('b'))}</span><b>${money(pb)}</b></div></div>
+    ${total ? `<div class="settle">${settle}</div>` : ''}
+  </section>
+  <section class="sec"><div class="sec-h"><h2>Gastos</h2><button class="link" data-act="expense" data-id="${t.id}">+ Añadir gasto</button></div>
+  ${ex.length ? `<div class="stack">${ex.map(e => `<button class="card item" data-act="expense" data-id="${t.id}" data-sub="${e.id}"><span class="ib pink">${ic('card', 'sm')}</span><span class="tx"><b>${esc(e.desc)}</b><span>${esc([e.cat, 'pagó ' + nameOf(e.payer), fmt(e.date, {day:'numeric', month:'short'})].filter(Boolean).join(' · '))}</span></span><span class="amt">${money(e.amount)}</span></button>`).join('')}</div>` : '<p class="muted small">Apuntad quién paga cada cosa y la app hace las cuentas al final.</p>'}</section>`;
+}
+function tPack(t) {
+  const items = live(t.packing), done = items.filter(i => i.done).length;
+  const groups = [['', 'Para los dos'], ['a', nameOf('a')], ['b', nameOf('b')]];
+  return `<form class="addrow" id="f-pack" data-id="${t.id}"><input id="pack-in" placeholder="Añadir a la maleta…" maxlength="80" autocomplete="off"><select id="pack-who" class="input" style="width:auto;min-width:0;flex:none">${groups.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('')}</select><button class="btn" style="width:46px;padding:0" aria-label="Añadir">${ic('plus')}</button></form>
+  ${items.length ? `<div class="small muted">${done} de ${items.length} preparado</div><div class="bar"><i style="width:${items.length ? done / items.length * 100 : 0}%"></i></div>
+  ${groups.map(([k, l]) => { const g = items.filter(i => (i.who || '') === k); if (!g.length) return '';
+    return `<section class="sec"><span class="eyebrow">${esc(l)}</span><div class="card pack">${g.map(i => `<label class="${i.done ? 'done' : ''}"><input type="checkbox" data-act="packToggle" data-id="${t.id}" data-sub="${i.id}" ${i.done ? 'checked' : ''}><span>${esc(i.text)}</span><button type="button" class="del" data-act="packDel" data-id="${t.id}" data-sub="${i.id}" aria-label="Quitar">${ic('x', 'sm')}</button></label>`).join('')}</div></section>`; }).join('')}`
+  : `<div class="empty">${ic('bag')}<h3>Maleta vacía</h3><p>Apuntad lo que hay que llevar y marcadlo cuando esté en la maleta.</p></div>`}`;
+}
+function tPhotos(t) {
+  const al = t.albumId && S.albums.find(a => a.id === t.albumId);
+  if (!al) return `<div class="empty">${ic('image')}<h3>Sin álbum todavía</h3><p>Crea el álbum de este viaje para ir subiendo las fotos.</p><button class="btn sm" data-act="tripAlbum" data-id="${t.id}">Crear álbum del viaje</button></div>`;
+  const ps = albumPhotos(al.id);
+  return `<div class="sec-h"><span class="eyebrow">${esc(al.title)} · ${plural(ps.length, 'foto')}</span><button class="link" data-act="openAlbum" data-id="${al.id}">Abrir álbum</button></div>
+    ${ps.length ? pgrid(ps.slice(0, 12), 'album:' + al.id) : `<div class="empty">${ic('cam')}<p>Aún no hay fotos.</p></div>`}
+    ${S.assets ? `<button class="btn ghost" data-act="addPhotos" data-id="${al.id}">${ic('cam', 'sm')} Añadir fotos</button>` : ''}`;
+}
+
+/* ---- timeline ---- */
+function vTimeline() {
+  const items = S.moments.map(m => ({t: 'm', date: m.date || '', m}));
+  if (S.cfg.start && !S.moments.some(m => m.kind === 'inicio')) items.push({t: 's', date: S.cfg.start});
+  S.trips.filter(t => tripState(t) === 'done' && t.start).forEach(t => items.push({t: 't', date: t.start, trip: t}));
+  items.sort((a, b) => a.date.localeCompare(b.date));
+  let lastY = '', out = '';
+  for (const it of items) {
+    const y = it.date.slice(0, 4);
+    if (y && y !== lastY) { out += `<div class="tl-year num">${y}</div>`; lastY = y; }
+    if (it.t === 's') out += `<div class="tl-it"><span class="d">${esc(fmtLong(it.date))}<span class="chip">El principio</span></span><h3>Empieza nuestra historia</h3><p class="muted">${esc(S.cfg.a)} &amp; ${esc(S.cfg.b)}</p></div>`;
+    else if (it.t === 't') { const t = it.trip, al = t.albumId && S.albums.find(a => a.id === t.albumId), c = albumCover(al);
+      out += `<button class="tl-it trip" data-act="openTrip" data-id="${t.id}"><span class="d">${esc(fmtRange(t.start, t.end))}<span class="chip teal">Viaje</span></span><h3>${flag(t.country)} ${esc(t.dest)}</h3>${c ? `<div class="pola"><img ${bsrc(c.thumb)} alt="" loading="lazy"><span class="cap">${esc(c.caption || t.dest)}</span></div>` : ''}</button>`; }
+    else { const m = it.m;
+      out += `<button class="tl-it" data-act="moment" data-sub="${m.id}"><span class="d">${esc(fmtLong(m.date))}<span class="chip">${esc(KINDS[m.kind] || 'Momento')}</span></span><h3>${esc(m.title)}</h3>${m.text ? `<p>${esc(m.text)}</p>` : ''}${m.thumb ? `<div class="pola"><img ${bsrc(m.thumb)} alt="" loading="lazy"><span class="cap">${esc(m.caption || '')}</span></div>` : ''}</button>`; }
+  }
+  return `<div class="sec-h"><h2 style="font-size:26px;font-weight:800">Nuestra historia</h2><span class="small muted">${plural(items.length, 'momento')}</span></div>
+  ${items.length ? `<div class="tl">${out}</div>` : `<div class="empty">${ic('tl')}<h3>Escribid vuestra historia</h3><p>Primera cita, aniversarios, el día que os mudasteis… cada momento con foto y texto.</p></div>`}
+  <button class="fab" data-act="moment" aria-label="Nuevo momento">${ic('plus')}</button>`;
+}
+
+/* ---- wishes ---- */
+function vWishes() {
+  const done = S.wishSeg === 'hechos';
+  const list = S.wishes.filter(w => !!w.done === done).sort((a, b) => done ? (b.doneAt || '').localeCompare(a.doneAt || '') : (b.at || 0) - (a.at || 0));
+  const pend = S.wishes.filter(w => !w.done).length, hechos = S.wishes.length - pend;
+  return `<div class="seg"><button data-act="seg" data-k="wishSeg" data-v="pend" aria-pressed="${!done}">Pendientes · ${pend}</button><button data-act="seg" data-k="wishSeg" data-v="hechos" aria-pressed="${done}">Cumplidos · ${hechos}</button></div>
+  ${list.length ? `<div class="stack">${list.map(w => `<div class="card wish ${w.done ? 'done' : ''}">
+    <button class="wcheck" data-act="${w.done ? 'wishUndo' : 'wishDone'}" data-sub="${w.id}" aria-label="${w.done ? 'Marcar como pendiente' : 'Marcar como hecho'}">${ic('check', 'sm')}</button>
+    <button class="tx" data-act="wish" data-sub="${w.id}" style="text-align:left"><h3>${esc(w.title)}</h3>${w.note ? `<p>${esc(w.note)}</p>` : ''}
+      <span class="row"><span class="chip ${w.kind === 'plan' ? '' : 'teal'}">${esc(WKINDS[w.kind] || 'Plan')}</span>${w.country ? `<span class="chip gray">${flag(w.country)} ${esc(countryName(w.country))}</span>` : ''}${w.place ? `<span class="chip gray">${esc(w.place)}</span>` : ''}${w.done && w.doneAt ? `<span class="small muted">Hecho el ${esc(fmt(w.doneAt))}</span>` : ''}</span></button></div>`).join('')}</div>`
+  : `<div class="empty">${ic('star')}<h3>${done ? 'Todavía nada cumplido' : 'Lista de deseos vacía'}</h3><p>${done ? 'Al marcar un deseo como hecho, se guarda como recuerdo en vuestra historia.' : 'Ese restaurante, ver la aurora boreal, aprender a bailar… apuntadlo aquí.'}</p></div>`}
+  <button class="fab" data-act="wish" aria-label="Nuevo deseo">${ic('plus')}</button>`;
+}
+
+/* ---- notes ---- */
+function vNotes() {
+  const me = mySlot(), list = [...S.notes].reverse();
+  let lastD = '', out = '';
+  list.forEach(n => { const d = ymd(new Date(n.at || 0));
+    if (d !== lastD) { out += `<div class="daysep">${d === today() ? 'Hoy' : esc(fmt(d, {weekday:'long', day:'numeric', month:'long'}))}</div>`; lastD = d; }
+    out += `<div class="msg ${n.by === me ? 'mine' : ''} ${n.by !== me && n.at > S.seenOnOpen ? 'new' : ''}"><div class="b">${esc(n.text)}</div><div class="m">${esc(nameOf(n.by))} · ${new Date(n.at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})}${n.by === me ? `<button data-act="noteDel" data-sub="${n.id}" style="margin-left:8px;color:var(--muted);text-decoration:underline">borrar</button>` : ''}</div></div>`; });
+  return `<form class="card compose" id="f-note"><textarea id="note-in" rows="1" maxlength="400" placeholder="Escribe algo bonito para ${esc(nameOf(other(me)))}…"></textarea><button class="btn" aria-label="Enviar nota">${ic('send', 'sm')}</button></form>
+  ${S.notes.length ? `<div class="msgs">${out}</div>` : `<div class="empty">${ic('msg')}<h3>Sin notas aún</h3><p>Un "te quiero", la lista de la compra o un recordatorio: le aparecerá en Inicio.</p></div>`}`;
+}
+
+/* ============ sheets ============ */
+function openSheet(html, mount) {
+  const r = $('#sheet-root');
+  r.innerHTML = `<div class="scrim" data-act="closeSheet"></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  r.hidden = false; document.body.classList.add('noscroll');
+  const sh = $('.sheet', r); mount && mount(sh);
+  const f = sh.querySelector('input:not([type=hidden]):not([type=file]),textarea'); if (f && matchMedia('(hover:hover)').matches) f.focus();
+}
+function closeSheet() { const r = $('#sheet-root'); r.hidden = true; r.innerHTML = ''; if (!S.viewer) document.body.classList.remove('noscroll'); }
+function confirmSheet(title, text, label, onYes) {
+  openSheet(`<h2>${esc(title)}</h2><p class="muted" style="margin-bottom:18px">${esc(text)}</p><div class="form-actions"><button class="btn" id="cf-yes" style="background:var(--accent)">${esc(label)}</button><button class="btn ghost" data-act="closeSheet">Cancelar</button></div>`,
+    sh => $('#cf-yes', sh).onclick = async () => { $('#cf-yes', sh).disabled = true; try { await onYes(); closeSheet(); } catch { $('#cf-yes', sh).disabled = false; } });
+}
+const countryOptions = sel => `<option value="">—</option>${COUNTRIES.map(([c, n]) => `<option value="${c}" ${c === sel ? 'selected' : ''}>${flag(c)} ${esc(n)}</option>`).join('')}`;
+function formData(f) { return Object.fromEntries(new FormData(f).entries()); }
+function bindForm(sh, fn) {
+  const f = $('form', sh);
+  f.onsubmit = async e => { e.preventDefault(); const b = f.querySelector('button[type=submit]'); if (b) b.disabled = true;
+    try { await fn(formData(f), f); closeSheet(); } catch { if (b) b.disabled = false; } };
+}
+
+/* album form */
+function albumSheet(a) {
+  const tripsOpt = [...S.trips].sort((x, y) => (y.start || '').localeCompare(x.start || '')).map(t => `<option value="${t.id}" ${a?.tripId === t.id ? 'selected' : ''}>${esc(t.dest)}${t.start ? ' · ' + esc(fmt(t.start, {month:'short', year:'numeric'})) : ''}</option>`).join('');
+  openSheet(`<h2>${a ? 'Editar álbum' : 'Nuevo álbum'}</h2><form class="form">
+    <label class="field"><span>Título</span><input name="title" required maxlength="60" value="${esc(a?.title)}" placeholder="Verano en Lisboa"></label>
+    <div class="two"><label class="field"><span>Fecha</span><input type="date" name="date" value="${esc(a?.date || today())}"></label>
+    <label class="field"><span>Lugar</span><input name="place" maxlength="60" value="${esc(a?.place)}" placeholder="Lisboa"></label></div>
+    ${S.trips.length ? `<label class="field"><span>Viaje vinculado</span><select name="tripId"><option value="">Ninguno</option>${tripsOpt}</select></label>` : ''}
+    <div class="form-actions"><button class="btn" type="submit">${a ? 'Guardar' : 'Crear álbum'}</button>${a ? `<button type="button" class="btn danger" id="del">Borrar álbum</button>` : ''}</div></form>`,
+    sh => { bindForm(sh, async d => {
+      const data = {title: d.title.trim(), date: d.date || '', place: d.place.trim(), tripId: d.tripId || ''};
+      if (a) {
+        await W(docRef('albums', a.id).update(data), 'Álbum guardado');
+        if (data.tripId && data.tripId !== a.tripId) await W(docRef('trips', data.tripId).update({albumId: a.id}));
+      } else {
+        const r = await W(col('albums').add({...data, cover: '', at: Date.now(), by: mySlot()}));
+        if (data.tripId) await W(docRef('trips', data.tripId).update({albumId: r.id}));
+        S.album = r.id; schedule();
+      }
+    });
+    if (a) $('#del', sh).onclick = () => { const n = S.photos.filter(p => p.albumId === a.id).length;
+      confirmSheet('¿Borrar este álbum?', n ? `Se borrarán también sus ${n} fotos. No se puede deshacer.` : 'No se puede deshacer.', 'Borrar álbum', async () => {
+        for (const p of S.photos.filter(p => p.albumId === a.id)) await deletePhoto(p, true);
+        await W(docRef('albums', a.id).delete(), 'Álbum borrado'); S.album = null; schedule(); }); };
+  });
+}
+
+/* image processing */
+async function loadImg(file) {
+  if ('createImageBitmap' in window) { try { return await createImageBitmap(file, {imageOrientation: 'from-image'}); } catch {} }
+  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+}
+function resize(src, max, q) {
+  const w = src.width, h = src.height, s = Math.min(1, max / Math.max(w, h));
+  const c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s);
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+  return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('encode')), 'image/jpeg', q));
+}
+async function exifDate(file) {
+  try {
+    const buf = await file.slice(0, 196608).arrayBuffer(), v = new DataView(buf);
+    if (v.getUint16(0) !== 0xFFD8) return null;
+    let o = 2;
+    while (o < v.byteLength - 10) {
+      const m = v.getUint16(o), len = v.getUint16(o + 2);
+      if (m === 0xFFE1 && v.getUint32(o + 4) === 0x45786966) {
+        const t = o + 10, le = v.getUint16(t) === 0x4949;
+        const g16 = p => v.getUint16(t + p, le), g32 = p => v.getUint32(t + p, le);
+        const ifd = p => { const n = g16(p), out = {}; for (let i = 0; i < n; i++) { const e = p + 2 + i * 12; out[g16(e)] = g32(e + 8); } return out; };
+        const str = off => { if (off == null) return null; let s = ''; for (let i = 0; i < 19; i++) s += String.fromCharCode(v.getUint8(t + off + i)); return s; };
+        const i0 = ifd(g32(4)); let d = null;
+        if (i0[0x8769] != null) d = str(ifd(i0[0x8769])[0x9003]);
+        if (!d || !/^\d{4}:\d\d:\d\d/.test(d)) d = str(i0[0x0132]);
+        return d && /^\d{4}:\d\d:\d\d/.test(d) && d.slice(0, 4) !== '0000' ? d.slice(0, 10).replace(/:/g, '-') : null;
+      }
+      if ((m & 0xFF00) !== 0xFF00) break;
+      o += 2 + len;
+    }
+  } catch {}
+  return null;
+}
+async function processUpload(file) {
+  const [img, taken] = await Promise.all([loadImg(file), exifDate(file)]);
+  const full = await resize(img, 2048, .85), th = await resize(img, 560, .8);
+  const up = async b => { try { return await S.assets.upload(b, {type: 'image/jpeg'}); } catch (e) { if (e?.code === 'store_unavailable') { await new Promise(r => setTimeout(r, 1200)); return S.assets.upload(b, {type: 'image/jpeg'}); } throw e; } };
+  const a = await up(full), b = await up(th);
+  return {img: a.id, thumb: b.id, w: img.width, h: img.height, taken: taken || ''};
+}
+function pickFiles(multiple, cb) {
+  const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; i.multiple = multiple;
+  i.onchange = () => i.files.length && cb([...i.files]); i.click();
+}
+function uploadSheet(albumId, files) {
+  const urls = files.map(f => URL.createObjectURL(f));
+  openSheet(`<h2>Añadir ${plural(files.length, 'foto')}</h2><form class="form">
+    <div class="upl">${files.map((f, i) => `<figure><img src="${urls[i]}" alt=""><input name="c${i}" maxlength="120" placeholder="Pie de foto (opcional)"></figure>`).join('')}</div>
+    <div class="progress" hidden><i></i></div><p class="small muted" id="up-st" hidden></p>
+    <div class="form-actions"><button class="btn" type="submit">Guardar ${plural(files.length, 'foto')}</button><button type="button" class="btn ghost" data-act="closeSheet">Cancelar</button></div></form>`,
+    sh => { const f = $('form', sh);
+      f.onsubmit = async e => { e.preventDefault();
+        const d = formData(f), btn = f.querySelector('[type=submit]'), pr = $('.progress', sh), st = $('#up-st', sh);
+        btn.disabled = true; pr.hidden = false; st.hidden = false; f.querySelectorAll('input').forEach(x => x.disabled = true);
+        let ok = 0, fail = 0, firstId = null;
+        for (let i = 0; i < files.length; i++) {
+          st.textContent = `Guardando ${i + 1} de ${files.length}…`;
+          try { const r = await processUpload(files[i]);
+            const ref = await col('photos').add({albumId, ...r, caption: (d['c' + i] || '').trim(), fav: false, at: Date.now() + i, by: mySlot()});
+            firstId ||= ref.id; ok++; }
+          catch (err) { console.error(err); fail++; st.textContent = errMsg(err); }
+          $('i', pr).style.width = ((i + 1) / files.length * 100) + '%';
+        }
+        const al = S.albums.find(a => a.id === albumId);
+        if (al && !al.cover && firstId) { try { await docRef('albums', albumId).update({cover: firstId}); } catch {} }
+        urls.forEach(u => URL.revokeObjectURL(u)); closeSheet();
+        toast(fail ? `${ok} guardadas, ${fail} fallaron` : `${plural(ok, 'foto guardada', 'fotos guardadas')}`);
+      };
+    });
+}
+async function deletePhoto(p, quiet) {
+  await W(docRef('photos', p.id).delete(), quiet ? '' : 'Foto borrada');
+  if (S.assets) { for (const id of [p.img, p.thumb]) if (id) try { await S.assets.delete(id); } catch {} }
+  const al = S.albums.find(a => a.id === p.albumId);
+  if (al && al.cover === p.id) try { await docRef('albums', al.id).update({cover: ''}); } catch {}
+}
+
+/* trip forms */
+function tripSheet(t) {
+  openSheet(`<h2>${t ? 'Editar viaje' : 'Nuevo viaje'}</h2><form class="form">
+    <label class="field"><span>Destino</span><input name="dest" required maxlength="60" value="${esc(t?.dest)}" placeholder="Roma, Toscana…"></label>
+    <label class="field"><span>País</span><select name="country">${countryOptions(t?.country || '')}</select></label>
+    <div class="two"><label class="field"><span>Ida</span><input type="date" name="start" value="${esc(t?.start)}"></label><label class="field"><span>Vuelta</span><input type="date" name="end" value="${esc(t?.end)}"></label></div>
+    <label class="field"><span>Presupuesto (${esc(S.cfg?.cur || 'EUR')})</span><input type="number" name="budget" inputmode="decimal" min="0" step="0.01" value="${esc(t?.budget || '')}" placeholder="1200"></label>
+    <div class="form-actions"><button class="btn" type="submit">${t ? 'Guardar' : 'Crear viaje'}</button>${t ? `<button type="button" class="btn danger" id="del">Borrar viaje</button>` : ''}</div></form>`,
+    sh => { bindForm(sh, async d => {
+      if (d.start && d.end && d.end < d.start) [d.start, d.end] = [d.end, d.start];
+      const data = {dest: d.dest.trim(), country: d.country || '', start: d.start || '', end: d.end || d.start || '', budget: d.budget ? Number(d.budget) : 0};
+      if (t) await W(docRef('trips', t.id).update(data), 'Viaje guardado');
+      else { const r = await W(col('trips').add({...data, at: Date.now(), by: mySlot()})); S.tab = 'viajes'; S.trip = r.id; S.tripTab = 'plan'; location.hash = 'viajes'; schedule(); }
+    });
+    if (t) $('#del', sh).onclick = () => confirmSheet('¿Borrar este viaje?', 'Se borra el plan, los gastos y la maleta. El álbum de fotos se conserva.', 'Borrar viaje', async () => {
+      await W(docRef('trips', t.id).delete(), 'Viaje borrado'); S.trip = null; schedule(); });
+  });
+}
+function subSheet({t, field, sub, title, fields, toData, okMsg}) {
+  const cur = sub ? (t[field] || {})[sub] : null;
+  openSheet(`<h2>${cur ? 'Editar' : 'Añadir'} ${title}</h2><form class="form">${fields(cur || {})}
+    <div class="form-actions"><button class="btn" type="submit">Guardar</button>${cur ? '<button type="button" class="btn danger" id="del">Quitar</button>' : ''}</div></form>`,
+    sh => { bindForm(sh, async d => { const id = sub || rid();
+      await W(docRef('trips', t.id).update({[field]: {[id]: {...toData(d), at: cur?.at || Date.now()}}}), okMsg); });
+      if (cur) $('#del', sh).onclick = async () => { await W(docRef('trips', t.id).update({[field]: {[sub]: null}})); closeSheet(); };
+    });
+}
+const getTrip = id => S.trips.find(x => x.id === id);
+
+/* moment form */
+function momentSheet(m, preset = {}, after) {
+  let photo = m ? {img: m.img, thumb: m.thumb} : null, file = null;
+  const v = {...(m || {}), ...preset};
+  openSheet(`<h2>${m ? 'Editar momento' : preset.title ? '¡Deseo cumplido!' : 'Nuevo momento'}</h2><form class="form">
+    <label class="field"><span>Título</span><input name="title" required maxlength="80" value="${esc(v.title)}" placeholder="Nuestra primera cita"></label>
+    <div class="two"><label class="field"><span>Fecha</span><input type="date" name="date" required value="${esc(v.date || today())}"></label>
+    <label class="field"><span>Tipo</span><select name="kind">${Object.entries(KINDS).filter(([k]) => k !== 'viaje').map(([k, l]) => `<option value="${k}" ${k === (v.kind || 'especial') ? 'selected' : ''}>${l}</option>`).join('')}</select></label></div>
+    <label class="field"><span>${preset.title ? '¿Cómo fue?' : 'Qué pasó'}</span><textarea name="text" maxlength="1500" placeholder="Lo que no queréis olvidar…">${esc(v.text)}</textarea></label>
+    <div class="field"><span>Foto</span><div class="photo-pick"><img id="mp-img" ${photo?.thumb ? `${bsrc(photo.thumb)}` : 'hidden'} alt="">
+      ${S.assets ? `<button type="button" class="btn ghost sm" id="mp-pick">${ic('cam', 'sm')} ${photo ? 'Cambiar' : 'Elegir foto'}</button>` : '<span class="small muted">Subir fotos requiere acceso de Editor.</span>'}</div></div>
+    <label class="field"><span>Pie de foto</span><input name="caption" maxlength="80" value="${esc(v.caption)}"></label>
+    <p class="small muted" id="mp-st" hidden></p>
+    <div class="form-actions"><button class="btn" type="submit">${preset.title && !m ? 'Guardar recuerdo' : 'Guardar'}</button>${m ? '<button type="button" class="btn danger" id="del">Borrar momento</button>' : ''}</div></form>`,
+    sh => {
+      const pick = $('#mp-pick', sh);
+      if (pick) pick.onclick = () => pickFiles(false, fs => { file = fs[0]; const im = $('#mp-img', sh); im.src = URL.createObjectURL(file); im.hidden = false; });
+      bindForm(sh, async d => {
+        if (file) { const st = $('#mp-st', sh); st.hidden = false; st.textContent = 'Guardando foto…'; const r = await W(processUpload(file)); photo = {img: r.img, thumb: r.thumb}; }
+        const data = {title: d.title.trim(), date: d.date, kind: d.kind, text: d.text.trim(), caption: d.caption.trim(), img: photo?.img || '', thumb: photo?.thumb || ''};
+        if (m) { await W(docRef('moments', m.id).update(data), 'Momento guardado'); }
+        else { const r = await W(col('moments').add({...data, ...(preset.wishId ? {wishId: preset.wishId} : {}), at: Date.now(), by: mySlot()}), 'Guardado en vuestra historia'); after && await after(r.id); }
+      });
+      if (m) $('#del', sh).onclick = () => confirmSheet('¿Borrar este momento?', 'Desaparece de vuestra historia.', 'Borrar', async () => {
+        await W(docRef('moments', m.id).delete(), 'Momento borrado');
+        if (S.assets && m.img) { try { await S.assets.delete(m.img); await S.assets.delete(m.thumb); } catch {} } });
+    });
+}
+
+/* wish form */
+function wishSheet(w) {
+  openSheet(`<h2>${w ? 'Editar deseo' : 'Nuevo deseo'}</h2><form class="form">
+    <label class="field"><span>¿Qué queréis hacer?</span><input name="title" required maxlength="80" value="${esc(w?.title)}" placeholder="Ver la aurora boreal"></label>
+    <div class="radios">${Object.entries(WKINDS).map(([k, l]) => `<label><input type="radio" name="kind" value="${k}" ${(w?.kind || 'plan') === k ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
+    <div class="two"><label class="field"><span>Lugar</span><input name="place" maxlength="60" value="${esc(w?.place)}" placeholder="Opcional"></label><label class="field"><span>País</span><select name="country">${countryOptions(w?.country || '')}</select></label></div>
+    <label class="field"><span>Nota</span><textarea name="note" maxlength="500" placeholder="Detalles, enlaces, cuándo…">${esc(w?.note)}</textarea></label>
+    <div class="form-actions"><button class="btn" type="submit">Guardar</button>${w ? '<button type="button" class="btn danger" id="del">Borrar deseo</button>' : ''}</div></form>`,
+    sh => { bindForm(sh, async d => {
+      const data = {title: d.title.trim(), kind: d.kind || 'plan', place: d.place.trim(), country: d.country || '', note: d.note.trim()};
+      if (w) await W(docRef('wishes', w.id).update(data), 'Deseo guardado');
+      else await W(col('wishes').add({...data, done: false, at: Date.now(), by: mySlot()}), 'Añadido a la lista');
+    });
+    if (w) $('#del', sh).onclick = () => confirmSheet('¿Borrar este deseo?', 'Se quita de la lista.', 'Borrar', () => W(docRef('wishes', w.id).delete(), 'Deseo borrado'));
+  });
+}
+
+/* settings */
+function settingsSheet() {
+  const c = S.cfg, me = mySlot();
+  openSheet(`<h2>Ajustes</h2><form class="form">
+    <div class="two"><label class="field"><span>Nombre 1</span><input name="a" required maxlength="30" value="${esc(c.a)}"></label><label class="field"><span>Nombre 2</span><input name="b" required maxlength="30" value="${esc(c.b)}"></label></div>
+    <label class="field"><span>Juntos desde</span><input type="date" name="start" value="${esc(c.start)}" max="${today()}"></label>
+    <label class="field"><span>Moneda de los gastos</span><select name="cur">${['EUR','USD','GBP','MXN','ARS','COP','CLP','CHF'].map(x => `<option ${x === (c.cur || 'EUR') ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+    <div class="note-box">En este móvil escribe <b>${esc(nameOf(me))}</b>: firma las notas y sale como quien paga por defecto. <button type="button" class="link" id="swap">Cambiar a ${esc(nameOf(other(me)))}</button></div>
+    <div class="form-actions"><button class="btn" type="submit">Guardar</button></div></form>
+    <section class="sec" style="margin-top:26px">
+      <h2 style="margin:0">Copia de seguridad</h2>
+      <p class="small muted">Los recuerdos y las fotos se guardan <b>solo en este móvil</b>. Descarga una copia cada semana o dos y guárdala en iCloud Drive. Descárgala siempre antes de borrar el icono de la app.</p>
+      <p class="small muted" id="usage">Calculando espacio…</p>
+      <div class="form-actions" style="margin-top:0">
+        <button type="button" class="btn teal" id="bk">Descargar copia completa</button>
+        <button type="button" class="btn ghost" id="imp">Importar copia</button>
+      </div>
+      <p class="small muted" id="bk-st" hidden></p>
+    </section>
+    <p class="small muted" style="text-align:center;margin-top:26px">Nido · versión ${VERSION}</p>`,
+    async sh => {
+      bindForm(sh, d => W(S.db.doc('app/config').update({a: d.a.trim(), b: d.b.trim(), start: d.start || '', cur: d.cur}), 'Ajustes guardados'));
+      $('#swap', sh).onclick = () => { const ns = other(me); lsSet('nido-slot', ns); closeSheet(); schedule(); toast(`Ahora escribe ${nameOf(ns)}`); };
+      const st = $('#bk-st', sh), bk = $('#bk', sh);
+      let ready = null;
+      bk.onclick = async () => {
+        if (ready) return saveFile(ready);
+        bk.disabled = true; st.hidden = false; st.textContent = 'Preparando la copia…';
+        try {
+          ready = await buildBackup(t => st.textContent = t);
+          st.textContent = `Copia lista (${(ready.size / 1048576).toFixed(1)} MB). Toca el botón para guardarla en Archivos.`;
+          bk.textContent = 'Guardar copia en Archivos';
+        } catch (e) { console.error(e); st.textContent = 'No se pudo preparar la copia. Prueba otra vez.'; }
+        bk.disabled = false;
+      };
+      $('#imp', sh).onclick = () => { const i = document.createElement('input'); i.type = 'file';
+        i.onchange = () => i.files[0] && confirmImport(i.files[0]); i.click(); };
+      try {
+        const [n, e] = await Promise.all([IDB.count('blobs'), navigator.storage?.estimate?.() || {}]);
+        const mb = x => (x / 1048576).toFixed(0);
+        $('#usage', sh).textContent = `${S.photos.length} fotos · ${mb(e.usage || 0)} MB usados en este móvil.`;
+      } catch { $('#usage', sh).hidden = true; }
+    });
+}
+
+/* Backup file: "NIDOBK01" + 12-digit header length + JSON header + the photo files one after another. */
+const MAGIC = 'NIDOBK01';
+async function buildBackup(progress) {
+  const docs = Object.fromEntries(LDB.docs);
+  const keys = await IDB.keys('blobs'), parts = [], index = [];
+  for (let i = 0; i < keys.length; i++) {
+    if (i % 20 === 0) progress(`Preparando la copia… ${i} de ${keys.length} archivos`);
+    const b = await IDB.get('blobs', keys[i]); if (!b) continue;
+    index.push([keys[i], b.type || 'image/jpeg', b.size]); parts.push(b);
+  }
+  const head = new TextEncoder().encode(JSON.stringify({app: 'nido', format: 1, version: VERSION, exportedAt: new Date().toISOString(), docs, blobs: index}));
+  const name = `nido-copia-${today()}.nido`;
+  return new File([MAGIC, String(head.length).padStart(12, '0'), head, ...parts], name, {type: 'application/octet-stream'});
+}
+async function saveFile(file) {
+  try {
+    if (navigator.canShare && navigator.canShare({files: [file]})) { await navigator.share({files: [file], title: file.name}); lsSet('nido-last-backup', today()); return; }
+  } catch (e) { if (e?.name === 'AbortError') return; console.error(e); }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  lsSet('nido-last-backup', today());
+}
+async function readBackup(file) {
+  if (await file.slice(0, 8).text() !== MAGIC) throw new Error('format');
+  const len = parseInt(await file.slice(8, 20).text(), 10);
+  const head = JSON.parse(await file.slice(20, 20 + len).text());
+  if (head.app !== 'nido') throw new Error('format');
+  return {head, off: 20 + len};
+}
+async function confirmImport(file) {
+  let info;
+  try { info = await readBackup(file); } catch { toast('Ese archivo no es una copia de Nido.'); return; }
+  const n = Object.keys(info.head.docs).filter(k => k.startsWith('photos/')).length;
+  closeSheet();
+  confirmSheet('¿Importar esta copia?', `Es del ${fmtLong(info.head.exportedAt.slice(0, 10))} y tiene ${plural(n, 'foto')}. Sustituye todo lo que hay ahora en este móvil.`, 'Importar copia', async () => {
+    const b = $('#cf-yes');
+    try {
+      await IDB.clear('docs'); await IDB.clear('blobs');
+      let off = info.off, i = 0;
+      for (const [id, type, size] of info.head.blobs) {
+        if (i++ % 10 === 0 && b) b.textContent = `Importando… ${i} de ${info.head.blobs.length}`;
+        const buf = await file.slice(off, off + size).arrayBuffer(); off += size;
+        await IDB.put('blobs', id, new Blob([buf], {type}));
+      }
+      for (const [k, v] of Object.entries(info.head.docs)) await IDB.put('docs', k, v);
+      toast('Copia importada'); setTimeout(() => location.reload(), 600);
+    } catch (e) { console.error(e); toast(errMsg(e)); throw e; }
+  });
+}
+
+/* ============ viewer ============ */
+function ctxList(ctx) {
+  if (ctx === 'favs') return sortPhotos(S.photos.filter(p => p.fav)).reverse();
+  if (ctx?.startsWith('album:')) return albumPhotos(ctx.slice(6));
+  return null;
+}
+function openViewer(id, ctx) {
+  const p = S.photos.find(x => x.id === id); if (!p) return;
+  const list = ctxList(ctx) || albumPhotos(p.albumId);
+  S.viewer = {ctx: ctx || 'album:' + p.albumId, ids: list.map(x => x.id), idx: Math.max(0, list.findIndex(x => x.id === id))};
+  const v = $('#viewer'); document.body.classList.add('noscroll');
+  v.innerHTML = `<div class="v-top"><button class="iconbtn" data-act="closeViewer" aria-label="Cerrar">${ic('x')}</button><div class="v-count num"></div>
+    <button class="iconbtn" data-act="vFav" aria-label="Favorita">${ic('heart')}</button><button class="iconbtn" data-act="vMore" aria-label="Más opciones">${ic('more')}</button></div>
+    <div class="v-track">${list.map(x => `<figure class="v-slide"><img ${bsrc(x.img)} alt="${esc(x.caption)}" loading="lazy" decoding="async"></figure>`).join('')}</div><div class="v-cap"></div>`;
+  v.hidden = false;
+  const tr = $('.v-track', v);
+  requestAnimationFrame(() => { tr.scrollLeft = S.viewer.idx * tr.clientWidth; updateViewer(); });
+  tr.onscroll = () => { const i = Math.round(tr.scrollLeft / tr.clientWidth); if (S.viewer && i !== S.viewer.idx) { S.viewer.idx = i; updateViewer(); } };
+}
+function updateViewer() {
+  const V = S.viewer, v = $('#viewer'); if (!V) return;
+  const p = S.photos.find(x => x.id === V.ids[V.idx]);
+  if (!p) { closeViewer(); return; }
+  $('.v-count', v).textContent = `${V.idx + 1} / ${V.ids.length}`;
+  const sl = v.querySelectorAll('.v-slide img'); [V.idx - 1, V.idx, V.idx + 1].forEach(i => sl[i] && loadB(sl[i]));
+  v.querySelector('[data-act=vFav]').classList.toggle('heart-on', !!p.fav);
+  const al = S.albums.find(a => a.id === p.albumId);
+  $('.v-cap', v).innerHTML = `${p.caption ? `<div class="c">${esc(p.caption)}</div>` : ''}<div class="d">${esc([al?.title, fmtLong(photoDate(p)), p.by && 'añadida por ' + nameOf(p.by)].filter(Boolean).join(' · '))}</div>`;
+}
+function closeViewer() { S.viewer = null; const v = $('#viewer'); v.hidden = true; v.innerHTML = ''; document.body.classList.remove('noscroll'); }
+const curPhoto = () => S.viewer && S.photos.find(x => x.id === S.viewer.ids[S.viewer.idx]);
+
+/* ============ actions ============ */
+const go = tab => { S.tab = tab; S.album = null; S.trip = null; try { if (location.hash !== '#' + tab) history.replaceState(null, '', '#' + tab); } catch {} if (tab === 'notas') markSeen(); render(); scrollTo(0, 0); };
+async function markSeen() {
+  S.seenOnOpen = S.seen;
+  const me = mySlot(), newest = S.notes.filter(n => n.by !== me).reduce((m, n) => Math.max(m, n.at || 0), 0);
+  if (newest > S.seen) { S.seen = newest; lsSet('nido-seen', String(newest)); }
+}
+const A = {
+  tab: d => go(d.tab),
+  seg: d => { S[d.k] = d.v; render(); },
+  settings: () => settingsSheet(),
+  closeSheet: () => closeSheet(),
+  shuffle: () => { S.otd++; render(); },
+  iam: async d => { lsSet('nido-slot', d.slot); if (S.uid) await W(S.db.doc('app/config').update({members: {[S.uid]: d.slot}})); render(); },
+  newAlbum: () => albumSheet(),
+  editAlbum: d => albumSheet(S.albums.find(a => a.id === d.id)),
+  openAlbum: d => { S.tab = 'albumes'; S.album = d.id; S.trip = null; try { history.replaceState(null, '', '#albumes'); } catch {} render(); scrollTo(0, 0); },
+  closeAlbum: () => { S.album = null; render(); },
+  addPhotos: d => pickFiles(true, fs => uploadSheet(d.id, fs)),
+  openPhoto: d => openViewer(d.id, d.ctx),
+  closeViewer: () => closeViewer(),
+  vFav: async () => { const p = curPhoto(); if (p) await W(docRef('photos', p.id).update({fav: !p.fav}), p.fav ? '' : 'Guardada en favoritas'); },
+  vMore: () => { const p = curPhoto(); if (!p) return;
+    openSheet(`<h2>Foto</h2><form class="form"><label class="field"><span>Pie de foto</span><input name="caption" maxlength="120" value="${esc(p.caption)}"></label>
+      <label class="field"><span>Fecha de la foto</span><input type="date" name="taken" value="${esc(p.taken)}"></label>
+      <div class="form-actions"><button class="btn" type="submit">Guardar</button><button type="button" class="btn ghost" id="cover">Usar como portada del álbum</button><button type="button" class="btn danger" id="del">Borrar foto</button></div></form>`,
+      sh => { bindForm(sh, d => W(docRef('photos', p.id).update({caption: d.caption.trim(), taken: d.taken || ''}), 'Guardado'));
+        $('#cover', sh).onclick = async () => { await W(docRef('albums', p.albumId).update({cover: p.id}), 'Portada cambiada'); closeSheet(); };
+        $('#del', sh).onclick = () => confirmSheet('¿Borrar esta foto?', 'No se puede deshacer.', 'Borrar foto', () => deletePhoto(p)); }); },
+  newTrip: () => tripSheet(),
+  editTrip: d => tripSheet(getTrip(d.id)),
+  openTrip: d => { S.tab = 'viajes'; S.trip = d.id; S.album = null; S.tripTab = 'plan'; try { history.replaceState(null, '', '#viajes'); } catch {} render(); scrollTo(0, 0); },
+  closeTrip: () => { S.trip = null; render(); },
+  tripTab: d => { S.tripTab = d.v; render(); },
+  lodging: d => subSheet({t: getTrip(d.id), field: 'lodging', sub: d.sub, title: 'alojamiento', okMsg: 'Alojamiento guardado',
+    fields: c => `<label class="field"><span>Nombre</span><input name="name" required maxlength="80" value="${esc(c.name)}" placeholder="Hotel, Airbnb…"></label>
+      <div class="two"><label class="field"><span>Entrada</span><input type="date" name="from" value="${esc(c.from || getTrip(d.id).start)}"></label><label class="field"><span>Salida</span><input type="date" name="to" value="${esc(c.to || getTrip(d.id).end)}"></label></div>
+      <label class="field"><span>Dirección</span><input name="address" maxlength="120" value="${esc(c.address)}"></label>
+      <label class="field"><span>Notas</span><textarea name="notes" maxlength="500" placeholder="Código de reserva, check-in…">${esc(c.notes)}</textarea></label>`,
+    toData: x => ({name: x.name.trim(), from: x.from, to: x.to, address: x.address.trim(), notes: x.notes.trim()})}),
+  transport: d => subSheet({t: getTrip(d.id), field: 'transport', sub: d.sub, title: 'transporte', okMsg: 'Transporte guardado',
+    fields: c => `<label class="field"><span>Tipo</span><select name="kind">${Object.entries(TKINDS).map(([k, [l]]) => `<option value="${k}" ${k === (c.kind || 'vuelo') ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <div class="two"><label class="field"><span>Desde</span><input name="from" required maxlength="50" value="${esc(c.from)}" placeholder="Madrid"></label><label class="field"><span>Hasta</span><input name="to" required maxlength="50" value="${esc(c.to)}" placeholder="Roma"></label></div>
+      <div class="two"><label class="field"><span>Fecha</span><input type="date" name="date" value="${esc(c.date || getTrip(d.id).start)}"></label><label class="field"><span>Hora</span><input type="time" name="time" value="${esc(c.time)}"></label></div>
+      <label class="field"><span>Referencia / nº de vuelo</span><input name="ref" maxlength="40" value="${esc(c.ref)}"></label>`,
+    toData: x => ({kind: x.kind, from: x.from.trim(), to: x.to.trim(), date: x.date, time: x.time, ref: x.ref.trim()})}),
+  expense: d => subSheet({t: getTrip(d.id), field: 'expenses', sub: d.sub, title: 'gasto', okMsg: 'Gasto guardado',
+    fields: c => `<label class="field"><span>Concepto</span><input name="desc" required maxlength="60" value="${esc(c.desc)}" placeholder="Cena en el Trastevere"></label>
+      <div class="two"><label class="field"><span>Importe</span><input type="number" name="amount" required inputmode="decimal" min="0" step="0.01" value="${esc(c.amount ?? '')}"></label><label class="field"><span>Fecha</span><input type="date" name="date" value="${esc(c.date || today())}"></label></div>
+      <div class="field"><span>¿Quién pagó?</span><div class="radios">${['a', 'b'].map(s => `<label><input type="radio" name="payer" value="${s}" ${(c.payer || mySlot()) === s ? 'checked' : ''}><span>${esc(nameOf(s))}</span></label>`).join('')}</div></div>
+      <label class="field"><span>Categoría</span><select name="cat">${ECATS.map(x => `<option ${x === c.cat ? 'selected' : ''}>${x}</option>`).join('')}</select></label>`,
+    toData: x => ({desc: x.desc.trim(), amount: Math.round(Number(x.amount) * 100) / 100, date: x.date, payer: x.payer, cat: x.cat})}),
+  tripNotes: d => { const t = getTrip(d.id);
+    openSheet(`<h2>Notas del viaje</h2><form class="form"><textarea name="notes" maxlength="4000" style="min-height:220px">${esc(t.notes)}</textarea><div class="form-actions"><button class="btn" type="submit">Guardar</button></div></form>`,
+      sh => bindForm(sh, x => W(docRef('trips', t.id).update({notes: x.notes.trim()}), 'Notas guardadas'))); },
+  dayEdit: d => { const t = getTrip(d.id), i = daysBetween(t.start, d.day) + 1;
+    openSheet(`<h2>Día ${i} · <span style="font-weight:600;text-transform:capitalize">${esc(fmt(d.day, {weekday:'long', day:'numeric', month:'short'}))}</span></h2><form class="form"><textarea name="txt" maxlength="3000" style="min-height:220px" placeholder="Mañana: museo&#10;Comida: …&#10;Tarde: paseo por…">${esc((t.itinerary || {})[d.day])}</textarea><div class="form-actions"><button class="btn" type="submit">Guardar</button></div></form>`,
+      sh => bindForm(sh, x => W(docRef('trips', t.id).update({itinerary: {[d.day]: x.txt.trim()}}), 'Día guardado'))); },
+  packToggle: async (d, el) => { await W(docRef('trips', d.id).update({packing: {[d.sub]: {done: el.checked}}})); },
+  packDel: async (d, el, e) => { e.preventDefault(); await W(docRef('trips', d.id).update({packing: {[d.sub]: null}})); },
+  tripAlbum: async d => { const t = getTrip(d.id);
+    const r = await W(col('albums').add({title: t.dest, date: t.start || today(), place: [t.dest, countryName(t.country)].filter(Boolean).join(', '), tripId: t.id, cover: '', at: Date.now(), by: mySlot()}));
+    await W(docRef('trips', t.id).update({albumId: r.id}), 'Álbum creado'); },
+  moment: d => momentSheet(d.sub ? S.moments.find(m => m.id === d.sub) : null),
+  wish: d => wishSheet(d.sub ? S.wishes.find(w => w.id === d.sub) : null),
+  wishDone: d => { const w = S.wishes.find(x => x.id === d.sub); if (!w) return;
+    momentSheet(null, {title: w.title, kind: 'deseo', wishId: w.id, text: w.note || ''}, async mid => {
+      await W(docRef('wishes', w.id).update({done: true, doneAt: today(), momentId: mid})); S.wishSeg = 'hechos'; schedule(); }); },
+  wishUndo: d => confirmSheet('¿Volver a pendiente?', 'El recuerdo que guardasteis se queda en la historia.', 'Marcar pendiente', () => W(docRef('wishes', d.sub).update({done: false, doneAt: ''}))),
+  noteDel: d => confirmSheet('¿Borrar esta nota?', 'No se puede deshacer.', 'Borrar', () => W(docRef('notes', d.sub).delete())),
+};
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  if (t.tagName === 'INPUT') return;
+  const f = A[t.dataset.act]; if (f) { if (t.tagName === 'A') e.preventDefault(); f(t.dataset, t, e); }
+});
+document.addEventListener('change', e => {
+  const t = e.target; if (t.matches('input[type=checkbox][data-act]')) A[t.dataset.act]?.(t.dataset, t, e);
+});
+document.addEventListener('submit', async e => {
+  const f = e.target;
+  if (f.id === 'f-onb') { e.preventDefault(); const d = formData(f), b = f.querySelector('button'); b.disabled = true;
+    try { await W(S.db.doc('app/config').set({a: d.a.trim(), b: d.b.trim(), start: d.start, cur: 'EUR', members: S.uid ? {[S.uid]: 'a'} : {}, at: Date.now()})); lsSet('nido-slot', 'a'); } catch { b.disabled = false; } }
+  if (f.id === 'f-note') { e.preventDefault(); const i = $('#note-in'), txt = i.value.trim(); if (!txt) return;
+    i.value = ''; try { await W(col('notes').add({text: txt, by: mySlot(), at: Date.now()})); } catch { i.value = txt; } }
+  if (f.id === 'f-pack') { e.preventDefault(); const i = $('#pack-in'), txt = i.value.trim(); if (!txt) return; const who = $('#pack-who').value;
+    i.value = ''; try { await W(docRef('trips', f.dataset.id).update({packing: {[rid()]: {text: txt, who, done: false, at: Date.now()}}})); } catch { i.value = txt; } i.focus(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (!$('#sheet-root').hidden) closeSheet(); else if (S.viewer) closeViewer(); }
+  if (S.viewer && $('#sheet-root').hidden && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { const tr = $('.v-track'); tr.scrollBy({left: (e.key === 'ArrowRight' ? 1 : -1) * tr.clientWidth, behavior: 'smooth'}); }
+  if (e.key === 'Enter' && !e.shiftKey && e.target.id === 'note-in') { e.preventDefault(); e.target.form.requestSubmit(); }
+});
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (['inicio', 'albumes', 'viajes', 'historia', 'deseos', 'notas'].includes(h) && h !== S.tab) go(h); });
+
+/* ============ boot ============ */
+function loadMap() {
+  window.jsVectorMap = {addMap: (n, d) => { window.__WORLD = d; worldCache.key = ''; schedule(); }};
+  const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js'; s.async = true; document.head.appendChild(s);
+}
+async function boot() {
+  const h = location.hash.slice(1); if (['inicio', 'albumes', 'viajes', 'historia', 'deseos', 'notas'].includes(h)) S.tab = h;
+  render();
+  try { if (!window.indexedDB) throw new Error('no idb'); await LDB.load(); }
+  catch (e) { console.error(e); S.err = 'nodb'; return render(); }
+  S.db = LDB; S.assets = LA; S.uid = null;
+  S.seen = Number(lsGet('nido-seen')) || 0;
+  LDB.doc('app/config').onSnapshot(s => { S.cfg = s.exists ? s.data() : null; schedule(); });
+  for (const c of ['albums', 'photos', 'trips', 'moments', 'wishes'])
+    LDB.collection(c).onSnapshot(q => { S[c] = q.docs.map(d => ({id: d.id, ...d.data()})); schedule(); });
+  LDB.collection('notes').orderBy('at', 'desc').limit(200).onSnapshot(q => { S.notes = q.docs.map(d => ({id: d.id, ...d.data()})); if (S.tab === 'notas') markSeen(); schedule(); });
+  loadMap();
+  if (S.tab === 'notas') S.seenOnOpen = 0;
+  try { navigator.storage?.persist?.(); } catch {}
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', {updateViaCache: 'none'}).catch(e => console.warn(e));
+}
+S.seenOnOpen = Infinity;
+boot();
+</script>
+
+</body></html>
