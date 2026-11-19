@@ -7,6 +7,22 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nido">
 <link rel="manifest" href="manifest.webmanifest">
+<script>
+/* Opened from the home-screen icon, iOS reports a page height shorter than the screen (by the status-bar area),
+   which left a gap under the tab bar. In that mode, size the app to the real screen instead. */
+(function () {
+  var de = document.documentElement;
+  var standalone = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  if (!standalone) return;
+  de.classList.add('standalone');
+  function fit() {
+    var portrait = !window.matchMedia || matchMedia('(orientation: portrait)').matches;
+    var full = portrait ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
+    de.style.setProperty('--app-h', Math.max(full, window.innerHeight) + 'px');
+  }
+  fit(); addEventListener('resize', fit); addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+})();
+</script>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
@@ -57,6 +73,11 @@ html,body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscro
 /* Feels like an app: no text selection or long-press menu, except where you type */
 body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+html.standalone,html.standalone body{height:var(--app-h,100vh);bottom:auto}
+html.standalone #app{bottom:auto;height:var(--app-h,100vh)}
+html.standalone #sheet-root,html.standalone #viewer{bottom:auto;height:var(--app-h,100vh)}
+html.standalone .fab{bottom:auto;top:calc(var(--app-h,100vh) - var(--nav-h) - env(safe-area-inset-bottom,0px) - 72px)}
+html.standalone #toast{bottom:auto;top:calc(var(--app-h,100vh) - var(--nav-h) - env(safe-area-inset-bottom,0px) - 64px)}
 #app{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
 .top{position:relative;flex:none;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .top .wrap{display:flex;align-items:center;gap:10px;min-height:58px}
@@ -473,7 +494,7 @@ const TKINDS = {vuelo:['Vuelo','plane'], tren:['Tren','train'], bus:['Autobús',
 const ECATS = ['Alojamiento','Transporte','Comida','Actividades','Compras','Otros'];
 
 /* ============ on-device storage ============ */
-const VERSION = '1.1.0';
+const VERSION = '1.1.1';
 const IDB = (() => {
   let p;
   const open = () => p ||= new Promise((res, rej) => {
